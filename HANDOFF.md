@@ -1,6 +1,14 @@
 # HANDOFF — Saleem & Co. website
 
-## Task completed
+## Task completed (latest)
+Added an **Our Lead Counsel** team section (between *About the Firm* and *Client Reviews*).
+- A 260vh scroll scene: the title pins center-screen while three member cards (S & Co. monogram frame + name/role caption) stream upward past it at individual speeds, scrubbed to scroll, with velocity-based motion blur.
+- Members: Sohail Saleem (CEO - Lead Advocate), Sadaan Sohail (Lawyer), Safwaan Sohail (Lawyer).
+- Screens ≤900px and reduced-motion get a static stacked layout (`team-static` class, applied by `setTeamMode()` in `script.js`).
+- **Implementation**: `#team` markup in `index.html` (cards carry `--x` slot + `data-start`/`data-travel` in vh units); **TEAM** CSS block in `style.css`; `teamScroll()` in `script.js`, called from `onScroll()`. Under the smooth-scroll shell the pin is a manual `translate3d` on `.team-stage` (sticky can't work inside the transformed fixed container); native-scroll devices use `position:sticky` via `body:not(.js-smooth)`.
+- Cards use the monogram as a placeholder visual per the reference design; swap in portraits by giving `.t-frame` a background image. No "Team" nav link added (same 4-item pill constraint as Reviews).
+
+## Previous task
 Added a **Client Reviews** carousel section (between *About the Firm* and *FAQ*).
 - Vertical 3-position carousel: the **current** review is centered and enlarged, the **coming-up** review peeks smaller/dimmer at the top, the **previous** review shrinks away at the bottom — looping continuously.
 - **Auto-advances every 4s**; **pauses on hover**; **click a peeking avatar to jump** to it. The right-side quote **crossfades** on change.

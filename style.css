@@ -317,6 +317,33 @@ body.js-smooth #smooth{position:fixed;inset:0 0 auto 0}
 .principle h3{font-family:'Marcellus SC',serif;font-size:1.05rem;letter-spacing:.2em}
 .principle span{color:var(--muted);font-size:.92rem}
 
+/* ============ TEAM ============ */
+#team{height:260vh;position:relative;overflow:clip}
+.team-stage{position:relative;height:100vh;will-change:transform}
+body:not(.js-smooth) .team-stage{position:sticky;top:0}
+.team-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:1;padding:0 6vw}
+.team-title{font-family:'Marcellus',serif;text-transform:uppercase;letter-spacing:.26em;line-height:1.42;
+  font-size:clamp(2.2rem,4.6vw,3.8rem);color:#C9BB94;margin-left:.26em;
+  text-shadow:0 6px 44px rgba(217,166,63,.14)}
+html[data-theme="light"] .team-title{color:#8A744A}
+.t-card{position:absolute;top:0;left:var(--x);width:clamp(200px,21vw,330px);z-index:2;
+  transform:translate3d(0,120vh,0);will-change:transform,filter}
+.t-frame{aspect-ratio:3/4;position:relative;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;
+  background:radial-gradient(120% 90% at 62% 14%,rgba(217,166,63,.15) 0%,transparent 55%),linear-gradient(160deg,var(--bg-3),var(--bg-2));
+  box-shadow:0 34px 80px rgba(0,0,0,.5)}
+html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
+.t-frame::after{content:"";position:absolute;inset:12px;border:1px solid var(--line-soft);border-radius:3px;pointer-events:none}
+.t-mono{font-size:clamp(2.4rem,4.4vw,3.6rem)}
+.t-est{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:.58rem;color:var(--muted)}
+.t-card figcaption{margin-top:26px;text-align:center;display:grid;gap:10px}
+.t-card figcaption b{font-family:'Marcellus SC',serif;font-weight:400;font-size:1.12rem;letter-spacing:.28em;color:var(--ink)}
+.t-card figcaption span{font-family:'Marcellus SC',serif;font-size:.78rem;letter-spacing:.28em;color:var(--muted)}
+/* static fallback -- small screens / reduced motion */
+#team.team-static{height:auto;overflow:visible;padding:110px 0 40px}
+#team.team-static .team-stage{position:static;height:auto}
+#team.team-static .team-center{position:static;padding:0 6vw;margin-bottom:64px}
+#team.team-static .t-card{position:static;transform:none!important;filter:none!important;width:min(300px,76vw);margin:0 auto 60px}
+
 /* ============ CLIENT REVIEWS ============ */
 #reviews{padding-top:120px;overflow:hidden}
 #reviews .container{position:relative;z-index:1}

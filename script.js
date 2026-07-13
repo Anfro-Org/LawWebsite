@@ -108,7 +108,80 @@
     }
 
     lastY = v;
+    teamScroll(v);
     spy(v);
+  }
+
+  /* ---------- TEAM PARALLAX (pin + card stream) ---------- */
+  const teamEl = document.getElementById("team"),
+    teamStage = document.getElementById("team-stage"),
+    tcards = [...document.querySelectorAll(".t-card")];
+
+  const teamMQ = matchMedia("(max-width: 900px)");
+
+  let teamStatic = false,
+    tBlur = 0,
+    tPrevV = null;
+
+  function setTeamMode() {
+    teamStatic = reduceMotion || teamMQ.matches;
+    teamEl.classList.toggle("team-static", teamStatic);
+
+    if (teamStatic) {
+      teamStage.style.transform = "";
+      tcards.forEach((card) => {
+        card.style.transform = "";
+        card.style.filter = "";
+      });
+    }
+  }
+
+  setTeamMode();
+  teamMQ.addEventListener("change", setTeamMode);
+
+  function teamScroll(v) {
+    if (teamStatic) return;
+
+    const h = vh(),
+      r = teamEl.getBoundingClientRect();
+
+    if (r.top > h + 40 || r.bottom < -40) {
+      tPrevV = v;
+      tBlur = 0;
+      return;
+    }
+
+    if (useSmooth) {
+      /* manual pin -- sticky can't work inside the transformed scroll shell */
+      const pin = Math.max(0, Math.min(-r.top, r.height - h));
+      teamStage.style.transform = `translate3d(0, ${pin.toFixed(1)}px, 0)`;
+    }
+
+    const p = Math.max(0, Math.min((h - r.top) / r.height, 1));
+
+    let blur = 0;
+
+    if (useSmooth) {
+      const dv = tPrevV == null ? 0 : v - tPrevV;
+      tBlur += (Math.min(Math.abs(dv) * 0.05, 5) - tBlur) * 0.16;
+      blur = tBlur > 0.3 ? tBlur : 0;
+    }
+
+    tPrevV = v;
+
+    for (const card of tcards) {
+      const y =
+        ((Number(card.dataset.start) -
+          Number(card.dataset.travel) * p) /
+          100) *
+        h;
+
+      card.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+
+      if (useSmooth) {
+        card.style.filter = blur ? `blur(${blur.toFixed(2)}px)` : "";
+      }
+    }
   }
 
   /* ---------- RAF LOOP ---------- */
