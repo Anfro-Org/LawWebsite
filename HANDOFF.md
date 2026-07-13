@@ -1,53 +1,45 @@
 # HANDOFF — Saleem & Co. website
 
 ## Task completed
-Front-end work on the single-page law-firm site:
-1. Added a subtle, theme-aware **candlelight cursor halo** (later softened to be more ambient).
-2. Matched the **hero + navbar** to the Figma design: embedded the **Forelle** font, applied spec sizing/glass to the nav pill, active tab, theme toggle, and Contact button, and scaled up the hero title.
-3. Made the **navbar full-width** (brand at far-left edge, toggle + Contact at far-right; pill stays centered) and **removed the faint line under the navbar**.
-4. **Split the single HTML file into three files** (`index.html`, `style.css`, `script.js`).
+Added a **Client Reviews** carousel section (between *About the Firm* and *FAQ*).
+- Vertical 3-position carousel: the **current** review is centered and enlarged, the **coming-up** review peeks smaller/dimmer at the top, the **previous** review shrinks away at the bottom — looping continuously.
+- **Auto-advances every 4s**; **pauses on hover**; **click a peeking avatar to jump** to it. The right-side quote **crossfades** on change.
+- Decorative gold **arc** curves around the avatars; large gold **quotation marks**; a warm **candlelight glow** blooms behind the section.
+- Theme-aware (dark + light), respects reduced-motion, and pauses when off-screen or the tab is hidden. Placeholder names/quotes + silhouette avatars (editable).
 
 ## Current branch
-`claude/candlelight-cursor-halo-n535xm` (pushed to origin)
+`claude/candlelight-cursor-halo-n535xm` (pushed to origin). No PR opened.
 
-Commits (newest first):
-- `5c312bf` Split single-file site into index.html, style.css, script.js
-- `eb59434` Full-width nav (brand left, CTA right) + remove under-nav line
-- `d32067b` Match hero + navbar to design: embed Forelle, spec nav/buttons
-- `86376ec` Soften candlelight halo for a more ambient blend
-- `0d17bd1` Add subtle candlelight halo that follows the cursor
+Commits for this task (newest first):
+- `8826039` Refine Client Reviews: 4s loop, flip arc, add candlelight glow
+- `247ba7e` Add auto-rotating Client Reviews carousel between About and FAQ
 
-No PR opened yet.
+(Earlier on this branch: candlelight cursor halo, hero/navbar Figma match with embedded Forelle font, full-width nav, and the split into `index.html` / `style.css` / `script.js`.)
 
 ## Important implementation decisions
-- **Candlelight halo** (`#cursor-halo`): radial gradient driven by per-theme CSS vars (`--halo`, `--halo-blend`, `--halo-opacity`, `--halo-size`); `screen` blend in dark / `multiply` in light. Follows the cursor with eased lag via the existing rAF loop, has a candle-flicker keyframe, grows on interactive hover. z-index 4 (above content, below nav/cursor/modals). Hidden on touch (`pointer:coarse`) and under `prefers-reduced-motion`.
-- **Forelle font**: embedded as base64 `@font-face` (Regular = 400, Medium = 500) inside the CSS; `.script` uses weight **500**. Fallback chain kept: `'Forelle','Great Vibes',cursive`.
-- **Nav pill**: fixed **574×55**, radius 10. Background baked to `rgba(181,139,70,.075)` = Figma's `0.16` fill × `0.47` layer opacity (baked so link text isn't dimmed).
-- **Active tab / toggle / Contact**: flat gold glass `rgba(230,196,117,.16)`. Toggle **55×55**. Contact button keeps its `.btn-fancy` hover interactiveness (sheen/glow/lift) but its **resting state was simplified** to a clean "Contact Us" (**193×55**, gold glass, gold-hi text) — icon, "Book a consultation" subtitle and arrow were removed.
-- **Hero title size**: set to `clamp(5rem,15vw,15rem)` — a **visual estimate** to match the reference (no Dev Mode CSS was provided for the title).
-- **Full-width nav**: `.nav` set to `width:100%; padding-inline:clamp(20px,3vw,44px)`. Centered pill is `position:absolute; left:50%` relative to the fixed `header`, so it is unaffected.
-- **Under-nav line**: it was `.mobile-menu`'s `border-bottom` (menu sits at `top:var(--nav-h)`, full width, collapsed on desktop). Border moved to the `body.menu-open` state only.
-- **File split**: inline `<style>` → `style.css` (linked in `<head>`), inline `<script>` → `script.js` (loaded before `</body>`). Embedded fonts/images travel inside `style.css`. **The three files must stay in the same folder** (relative paths).
+- **Markup** (`index.html`, `#reviews`): three `.rv-person` buttons, each holding `.rv-inner` → `.rv-ava` (silhouette SVG in gold glass) + `.rv-name`. Quote text lives in a `data-quote` attribute on each button; the active one is copied into `#rv-text`. A `.rv-glow` div and an `.rv-arc` SVG are section decorations.
+- **Position system** (CSS): each `.rv-person` gets `is-active` / `is-next` / `is-prev`, which set custom props `--ox/--oy/--s/--op`. The person is `translate`d (vertical slot via `translateY(calc(-50% + var(--oy)))`, no scale — so `-50%` centering stays exact); `.rv-inner` is `scale()`d with `transform-origin:left center`, so the avatar **and** name scale as one unit and the name always hugs the avatar.
+- **JS** (`script.js`, `reviews()` IIFE module): `place()` recomputes positions each step. The element crossing directly between top (`next`) and bottom (`prev`) gets a one-frame `.rv-noanim` so it **jumps** instead of animating back through the middle. `setInterval(…,4000)` drives auto-advance, guarded by `inView` (IntersectionObserver), `hovered`, `document.hidden` (visibilitychange), and `reduceMotion` (no auto-advance). Clicking a peeker steps forward (`next`) or backward (`prev`) and resets the dwell timer. Adapts to any N ≥ 1 reviews.
+- **Arc**: SVG path `M42 24 C 156 180, 156 440, 42 596` (bulges **right**, toward the avatars) with a vertical gold gradient stroke; `.rv-arc{left:-5%}`.
+- **Blended lighting** (`.rv-glow`): a warm radial gradient, `mix-blend-mode:screen` in dark / `multiply` (opacity .6) in light. It sits at `z-index:0` while `#reviews .container` is `z-index:1`, so content stays crisp above it; `#reviews{overflow:hidden}` clips it to the section.
+- Reuses the existing token system (`--gold-hi`, `--gold`, `--glass-edge`, `--glass-fill`, `Marcellus SC` names, `.sec-eyebrow`, `.reveal`) so light + dark both stay correct.
 
 ## Files changed
-- `index.html` — markup only now (~33 KB, was ~384 KB).
-- `style.css` — **new**; all CSS + embedded Forelle fonts + background/seal image data URIs (~455 lines, ~337 KB).
-- `script.js` — **new**; all JavaScript (~298 lines).
+- `index.html` — added the `#reviews` section (glow div, arc SVG, 3 review buttons, quote figure).
+- `style.css` — new **CLIENT REVIEWS** block + responsive rules (stacks ≤980px; smaller avatars/offsets ≤560px).
+- `script.js` — new `reviews()` carousel module (inside the existing IIFE).
 
 ## Unresolved issues
-- **Background image not swapped** — the user pasted it inline, but it was never saved as a file, so it couldn't be embedded. Current background is the existing law-office scene.
-- **Hero title / eyebrow / description sizing is estimated** — no Figma Dev Mode CSS was provided for these; the title size is a visual approximation.
-- **Toggle icon** is a plain crescent; the reference shows a moon **+ small star** (not yet added).
-- **Nav pill is a fixed 574px** — slight crowding is possible between ~1020–1200px viewport width (pre-existing; fine on large screens; the pill is hidden ≤1020px where the hamburger takes over).
-- **`style.css` is large / has very long lines** because fonts and images are base64-embedded (kept to satisfy the "three files" request).
+- **Placeholder content**: names/quotes are samples (in `.rv-name` + `data-quote`); avatars are silhouette SVGs — awaiting real copy/photos.
+- **No "Reviews" nav link**: the nav pill is a fixed 574px with 4 items; adding a 5th would crowd it (would need widening the pill).
+- **Fonts in sandbox**: `Marcellus` / `Marcellus SC` load via the Google Fonts `<link>`; that CDN is blocked in the render sandbox (`ERR_CONNECTION_RESET`), so headless shots fall back to a system serif. Renders correctly in a real browser.
+- Carried over from earlier branch work: hero **background image** not swapped; hero **title/eyebrow/description sizing** is a visual estimate (no Figma Dev Mode CSS); `style.css` is large due to base64-embedded fonts/images.
 
 ## Exact next steps
-1. **Swap background**: get the image as an **attached file**, then replace the `.hero-bg` `background:url("data:...")` data URI in `style.css` (or move it to an `assets/` file and reference it).
-2. **Exact hero typography**: get Figma **Dev Mode CSS** for `.hero-title`, `.hero-eyebrow`, `.hero-desc`; apply exact `font-size` / `line-height` / `letter-spacing` / color.
-3. *(Optional)* Add the **moon + star** to the toggle SVG (`.icon-moon` in `index.html`).
-4. *(Optional)* Externalize embedded fonts/images from `style.css` into an `assets/` folder for a shorter, fully human-readable stylesheet (this exceeds "three files").
-5. **Open a PR** from `claude/candlelight-cursor-halo-n535xm` when ready to merge.
+1. **Real reviews**: edit the three `.rv-person` blocks in `index.html` — change `.rv-name` text and each `data-quote="…"`. Add/remove a `.rv-person` to change the count.
+2. **Photo avatars**: replace the `<svg>` inside each `.rv-ava` with `<img …>`; add `.rv-ava img{width:100%;height:100%;object-fit:cover;border-radius:inherit}` to `style.css`.
+3. *(Optional)* Tune the glow (`.rv-glow` intensity/position) or arc curvature; add a **"Reviews"** nav link and widen the pill.
+4. **Open a PR** from `claude/candlelight-cursor-halo-n535xm` when ready to merge.
 
-## Verifying changes
-Render locally with Chromium/Playwright (scripts used during development live in the session scratchpad, not the repo):
-`chromium` at `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`; load `file:///home/user/LawWebsite/index.html`, wait for `document.fonts.ready`, screenshot dark + light. Check: Forelle title renders, nav dimensions (pill 574×55, contact 193×55, toggle 55×55), no line under the nav, and the halo follows the cursor after a mouse move.
+## Previewing
+The site is three files that must sit in the same folder (`index.html` + `style.css` + `script.js`); open `index.html`. For a single openable file, inline `style.css` into a `<style>` and `script.js` into a `<script>` in a copy of `index.html`. Headless verification used Chromium at `/opt/pw-browsers/chromium-1194/chrome-linux/chrome` (scripts live in the session scratchpad, not the repo).
