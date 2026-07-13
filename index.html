@@ -139,7 +139,7 @@ body.cursor-hover #cursor-halo::before{transform:scale(1.22)}
 /* ============ NAV ============ */
 header{position:fixed;top:0;left:0;right:0;z-index:60;height:var(--nav-h);display:flex;align-items:center;transition:transform .55s var(--ease)}
 header.hide{transform:translateY(-115%)}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;padding-inline:clamp(20px,3vw,44px)}
 .brand{display:flex;flex-direction:column;line-height:1}
 .brand .script{font-size:1.9rem}
 .brand small{font-family:'Inter',sans-serif;font-weight:300;font-size:.53rem;letter-spacing:.34em;color:var(--muted);margin-top:3px}
@@ -226,8 +226,8 @@ html[data-theme="light"] .bf-text b{text-shadow:none}
 body.menu-open #hamburger span:nth-child(1){transform:translateY(4.5px) rotate(45deg)}
 body.menu-open #hamburger span:nth-child(2){transform:translateY(-4.5px) rotate(-45deg)}
 .mobile-menu{position:fixed;top:var(--nav-h);left:0;right:0;z-index:55;background:var(--glass);backdrop-filter:blur(22px);
-  border-bottom:1px solid var(--line-soft);max-height:0;overflow:hidden;transition:max-height .6s var(--ease)}
-body.menu-open .mobile-menu{max-height:460px}
+  max-height:0;overflow:hidden;transition:max-height .6s var(--ease)}
+body.menu-open .mobile-menu{max-height:460px;border-bottom:1px solid var(--line-soft)}
 .mobile-menu a{display:block;padding:19px 6vw;font-family:'Marcellus SC',serif;letter-spacing:.12em;font-size:1.1rem;border-top:1px solid var(--line-soft);color:var(--muted)}
 .mobile-menu a.active{color:var(--gold-hi)}
 
