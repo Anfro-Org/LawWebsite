@@ -294,5 +294,64 @@ form.addEventListener('submit',e=>{
 document.getElementById('success-close').addEventListener('click',()=>success.classList.remove('show'));
 success.addEventListener('click',e=>{if(e.target===success)success.classList.remove('show');});
 
+/* ---------- CLIENT REVIEWS CAROUSEL ---------- */
+(function reviews(){
+  const stage=document.getElementById('rv-stage');
+  if(!stage)return;
+  const people=[...stage.querySelectorAll('.rv-person')];
+  const textEl=document.getElementById('rv-text');
+  const quoteBox=document.getElementById('rv-quote');
+  const N=people.length;
+  if(!N||!textEl||!quoteBox)return;
+  let active=0,timer=null,inView=false,hovered=false,swapT=null;
+
+  function setQuote(i,animate){
+    const q=people[i].getAttribute('data-quote')||'';
+    if(!animate){textEl.textContent=q;return;}
+    quoteBox.classList.add('is-swap');
+    clearTimeout(swapT);
+    swapT=setTimeout(()=>{textEl.textContent=q;quoteBox.classList.remove('is-swap');},320);
+  }
+
+  function place(animate){
+    people.forEach((el,i)=>{
+      const prev=el.dataset.pos||'';
+      let pos='prev';
+      if(i===active)pos='active';
+      else if(i===(active+1)%N)pos='next';
+      // an element crossing directly between top(next) and bottom(prev) must not animate through the middle
+      const wrap=(prev==='next'&&pos==='prev')||(prev==='prev'&&pos==='next');
+      if(!animate||wrap)el.classList.add('rv-noanim');
+      el.classList.remove('is-active','is-next','is-prev');
+      el.classList.add('is-'+pos);
+      el.dataset.pos=pos;
+      el.setAttribute('aria-hidden',pos==='active'?'false':'true');
+      if(!animate||wrap){void el.offsetWidth;el.classList.remove('rv-noanim');}
+    });
+    setQuote(active,animate);
+  }
+
+  function go(i,animate){active=((i%N)+N)%N;place(animate);}
+  function next(){go(active+1,true);}
+  function start(){if(timer||reduceMotion)return;timer=setInterval(()=>{if(inView&&!hovered)next();},5000);}
+  function stop(){clearInterval(timer);timer=null;}
+  function sync(){(inView&&!hovered&&!reduceMotion)?start():stop();}
+
+  place(false); // initial positions, no animation
+
+  people.forEach(el=>{
+    el.addEventListener('click',()=>{
+      const pos=el.dataset.pos;
+      if(pos==='active')return;
+      go(pos==='prev'?active-1:active+1,true);
+      if(timer){stop();start();} // reset the dwell timer after a manual jump
+    });
+  });
+  stage.addEventListener('mouseenter',()=>{hovered=true;sync();});
+  stage.addEventListener('mouseleave',()=>{hovered=false;sync();});
+  document.addEventListener('visibilitychange',()=>{document.hidden?stop():sync();});
+  new IntersectionObserver(es=>{inView=es[0].isIntersecting;sync();},{threshold:.35}).observe(stage);
+})();
+
 document.getElementById('year').textContent=new Date().getFullYear();
 })();
