@@ -349,15 +349,15 @@ html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
 /* ============ CLIENT REVIEWS ============ */
 #reviews{padding-top:120px;overflow:hidden}
 #reviews .container{position:relative;z-index:1}
-.rv-glow{position:absolute;left:61%;top:58%;transform:translate(-50%,-50%);width:min(1260px,92%);height:min(860px,128%);pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse closest-side,rgba(250,212,138,.30) 0%,rgba(222,158,68,.13) 40%,rgba(165,108,34,.04) 62%,rgba(120,80,20,0) 78%);
+.rv-glow{position:absolute;left:52%;top:52%;transform:translate(-50%,-50%);width:170%;height:160%;pointer-events:none;z-index:0;
+  background:radial-gradient(52% 42% at 56% 44%,rgba(250,212,138,.10) 0%,rgba(226,164,74,.055) 36%,rgba(170,115,40,.025) 58%,rgba(120,80,20,.008) 74%,rgba(120,80,20,0) 88%);
   mix-blend-mode:screen}
-html[data-theme="light"] .rv-glow{background:radial-gradient(ellipse closest-side,rgba(228,176,84,.30) 0%,rgba(214,158,66,.12) 42%,rgba(150,110,40,0) 74%);mix-blend-mode:multiply;opacity:.6}
+html[data-theme="light"] .rv-glow{background:radial-gradient(52% 42% at 56% 44%,rgba(214,158,66,.12) 0%,rgba(200,148,60,.05) 40%,rgba(150,110,40,.02) 62%,rgba(150,110,40,0) 85%);mix-blend-mode:multiply;opacity:.55}
 .rv-eyebrow{justify-content:flex-start}
 .rv-eyebrow::after{display:none}
 .rv-stage{display:grid;grid-template-columns:minmax(300px,.92fr) 1.08fr;gap:48px;align-items:center;margin-top:64px}
 .rv-rail{position:relative;min-height:520px}
-.rv-arc{position:absolute;top:0;left:-5%;width:min(340px,78%);height:100%;pointer-events:none;opacity:.8}
+.rv-arc{position:absolute;top:0;left:-5%;width:min(320px,72%);height:100%;pointer-events:none;opacity:.8}
 .rv-people{position:absolute;inset:0}
 .rv-person{position:absolute;top:50%;left:6%;background:none;border:0;padding:0;margin:0;cursor:pointer;color:inherit;text-align:left;
   transform:translate(var(--ox,-4px),calc(-50% + var(--oy,0px)));opacity:var(--op,0);z-index:1;
@@ -369,9 +369,11 @@ html[data-theme="light"] .rv-glow{background:radial-gradient(ellipse closest-sid
   box-shadow:var(--glass-shine),0 18px 42px rgba(0,0,0,.34);transition:border-color .6s var(--ease),box-shadow .6s var(--ease)}
 .rv-ava svg{width:54%;height:54%;fill:var(--gold-hi);opacity:.85}
 .rv-name{font-family:'Marcellus SC',serif;letter-spacing:.24em;font-size:1.2rem;color:var(--muted);white-space:nowrap;transition:color .6s var(--ease)}
-.rv-person.is-active{--ox:18px;--oy:0px;--s:1;--op:1;z-index:3}
-.rv-person.is-next{--ox:-4px;--oy:-176px;--s:.56;--op:.4}
-.rv-person.is-prev{--ox:-4px;--oy:176px;--s:.56;--op:.4}
+/* --rv-ox-a / --rv-ox-s are set by reviews() in script.js so the avatar
+   centres ride the arc at any rail size; the px values are fallbacks */
+.rv-person.is-active{--ox:var(--rv-ox-a,18px);--oy:0px;--s:1;--op:1;z-index:3}
+.rv-person.is-next{--ox:var(--rv-ox-s,-4px);--oy:-176px;--s:.56;--op:.4}
+.rv-person.is-prev{--ox:var(--rv-ox-s,-4px);--oy:176px;--s:.56;--op:.4}
 .rv-person.is-active .rv-ava{border-color:var(--gold);box-shadow:var(--glass-shine),0 24px 60px rgba(0,0,0,.42)}
 .rv-person.is-active .rv-name{color:var(--gold-hi)}
 .rv-person:not(.is-active):hover{--op:.68}
@@ -461,6 +463,9 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .nav-pill{display:none}
   #hamburger{display:block}
   .about-grid,.book-grid{grid-template-columns:1fr;gap:56px}
+}
+@media(max-width:1150px) and (min-width:981px){
+  .rv-name{font-size:1.02rem;letter-spacing:.18em}
 }
 @media(max-width:900px){
   #tree-svg{display:none}

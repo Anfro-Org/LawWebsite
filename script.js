@@ -905,6 +905,47 @@
 
   place(false); // initial positions, no animation
 
+  /* ---- keep avatar centres riding the arc ----
+     The arc SVG stretches (preserveAspectRatio=none), so map each slot's
+     y into viewBox space, bisect the path for that y (monotonic), and map
+     the x back to rail pixels. Sets --rv-ox-a / --rv-ox-s on the stage. */
+  const rail=stage.querySelector('.rv-rail');
+  const arc=stage.querySelector('.rv-arc');
+  const arcPath=arc?arc.querySelector('path'):null;
+  const AVA_HALF=59; // .rv-ava is 118px wide; inner scales from left centre
+
+  function xOnArc(yRail,railBox,arcBox){
+    const vy=(yRail-(arcBox.top-railBox.top))*620/arcBox.height;
+    let lo=0,hi=arcPath.getTotalLength();
+    for(let i=0;i<24;i++){
+      const mid=(lo+hi)/2;
+      if(arcPath.getPointAtLength(mid).y<vy)lo=mid;else hi=mid;
+    }
+    const vx=arcPath.getPointAtLength((lo+hi)/2).x;
+    return (arcBox.left-railBox.left)+vx*arcBox.width/200;
+  }
+
+  function alignArc(){
+    if(!arcPath)return;
+    if(!arc.getClientRects().length){ // arc hidden (small screens): CSS fallbacks
+      stage.style.removeProperty('--rv-ox-a');
+      stage.style.removeProperty('--rv-ox-s');
+      return;
+    }
+    const railBox=rail.getBoundingClientRect(),arcBox=arc.getBoundingClientRect();
+    const side=people.find(el=>el.classList.contains('is-next'))||people.find(el=>el.classList.contains('is-prev'));
+    const anchor=railBox.width*.06,mid=railBox.height/2;
+    stage.style.setProperty('--rv-ox-a',(xOnArc(mid,railBox,arcBox)-anchor-AVA_HALF).toFixed(1)+'px');
+    if(side){
+      const oy=parseFloat(getComputedStyle(side).getPropertyValue('--oy'))||-176;
+      const s=parseFloat(getComputedStyle(side).getPropertyValue('--s'))||.56;
+      stage.style.setProperty('--rv-ox-s',(xOnArc(mid+oy,railBox,arcBox)-anchor-AVA_HALF*s).toFixed(1)+'px');
+    }
+  }
+
+  alignArc();
+  addEventListener('resize',alignArc);
+
   people.forEach(el=>{
     el.addEventListener('click',()=>{
       const pos=el.dataset.pos;
