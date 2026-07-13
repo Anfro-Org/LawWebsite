@@ -719,6 +719,38 @@
     });
   }
 
+  /* ---------- TEAM CARD TILT ---------- */
+  if (finePointer && !reduceMotion) {
+    tcards.forEach((card) => {
+      const frame = card.querySelector(".t-frame");
+
+      card.addEventListener("mousemove", (event) => {
+        const rect = card.getBoundingClientRect();
+
+        const x =
+          (event.clientX - rect.left) / rect.width - 0.5;
+
+        const y =
+          (event.clientY - rect.top) / rect.height - 0.5;
+
+        frame.style.transform = `perspective(900px) rotateY(${
+          x * 10
+        }deg) rotateX(${-y * 10}deg)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        frame.style.transition =
+          "transform .8s cubic-bezier(.22,1,.36,1)";
+
+        frame.style.transform = "";
+
+        setTimeout(() => {
+          frame.style.transition = "transform .2s linear";
+        }, 800);
+      });
+    });
+  }
+
   /* ---------- FAQ ---------- */
   document.querySelectorAll(".faq").forEach((item) => {
     const question = item.querySelector(".faq-q");

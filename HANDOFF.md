@@ -7,6 +7,8 @@ Added an **Our Lead Counsel** team section (between *About the Firm* and *Client
 - Screens ≤900px and reduced-motion get a static stacked layout (`team-static` class, applied by `setTeamMode()` in `script.js`).
 - **Implementation**: `#team` markup in `index.html` (cards carry `--x` slot + `data-start`/`data-travel` in vh units); **TEAM** CSS block in `style.css`; `teamScroll()` in `script.js`, called from `onScroll()`. Under the smooth-scroll shell the pin is a manual `translate3d` on `.team-stage` (sticky can't work inside the transformed fixed container); native-scroll devices use `position:sticky` via `body:not(.js-smooth)`.
 - Cards use the monogram as a placeholder visual per the reference design; swap in portraits by giving `.t-frame` a background image. No "Team" nav link added (same 4-item pill constraint as Reviews).
+- The headline renders **above** the cards (`.team-center` z-index 3, `pointer-events:none`) and the center card is timed (`data-start="200"`) to enter only after the pin, so the title is never hidden when the section arrives.
+- Cards are **interactive** like the About frame: pointer tilt (`perspective + rotateX/Y`, TEAM CARD TILT block in `script.js`) and a gold `.shine` sweep on hover.
 
 ## Previous task
 Added a **Client Reviews** carousel section (between *About the Firm* and *FAQ*).
