@@ -351,6 +351,9 @@ html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
 #reviews .container{position:relative;z-index:1}
 .rv-glow{position:absolute;left:52%;top:52%;transform:translate(-50%,-50%);width:170%;height:160%;pointer-events:none;z-index:0;
   background:radial-gradient(52% 42% at 56% 44%,rgba(250,212,138,.10) 0%,rgba(226,164,74,.055) 36%,rgba(170,115,40,.025) 58%,rgba(120,80,20,.008) 74%,rgba(120,80,20,0) 88%);
+  /* the section clips this at its top edge (17.5% of the glow's height) - fade to zero there so no seam */
+  -webkit-mask-image:linear-gradient(180deg,transparent 17%,#000 34%);
+  mask-image:linear-gradient(180deg,transparent 17%,#000 34%);
   mix-blend-mode:screen}
 html[data-theme="light"] .rv-glow{background:radial-gradient(52% 42% at 56% 44%,rgba(214,158,66,.12) 0%,rgba(200,148,60,.05) 40%,rgba(150,110,40,.02) 62%,rgba(150,110,40,0) 85%);mix-blend-mode:multiply;opacity:.55}
 .rv-eyebrow{justify-content:flex-start}
