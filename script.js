@@ -35,9 +35,14 @@
     content = document.getElementById("page-content"),
     ghost = document.getElementById("ghost");
 
-  let target = 0,
-  current = 0,
-  ticking = false;
+  let target = scrollY,
+    current = scrollY,
+    nativeFramePending = false;
+
+  const mobileEffects = isTouch && !reduceMotion;
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const snapToDevicePixel = (value) =>
+    Math.round(value * pixelRatio) / pixelRatio;
 
   function setGhost() {
     ghost.style.height =
@@ -51,27 +56,56 @@
     setGhost();
 
     if ("ResizeObserver" in window) {
-      new ResizeObserver(setGhost).observe(content);
+      new ResizeObserver(() => {
+        setGhost();
+        scheduleHeroMetricsRefresh();
+      }).observe(content);
     }
 
-    addEventListener("resize", setGhost);
+    addEventListener("resize", () => {
+      setGhost();
+      scheduleHeroMetricsRefresh();
+    }, { passive: true });
   } else {
+    /*
+     * Touch browsers dispatch native scrolling on the compositor thread.
+     * We only animate the fixed hero layer here and let the document retain
+     * native momentum scrolling. A short interpolation removes uneven scroll
+     * event spacing without transforming the whole page on mobile.
+     */
+    const runNativeFrame = () => {
+      const actualY = scrollY;
+      target = actualY;
+
+      if (mobileEffects) {
+        const distance = target - current;
+        current += distance * 0.55;
+
+        if (Math.abs(target - current) < 0.35) {
+          current = target;
+        }
+      } else {
+        current = target;
+      }
+
+      onScroll(current, actualY);
+
+      if (Math.abs(target - current) > 0.35 || scrollY !== target) {
+        requestAnimationFrame(runNativeFrame);
+      } else {
+        nativeFramePending = false;
+      }
+    };
+
     addEventListener(
       "scroll",
       () => {
         target = scrollY;
 
-        if (ticking) {
-          return;
+        if (!nativeFramePending) {
+          nativeFramePending = true;
+          requestAnimationFrame(runNativeFrame);
         }
-
-        ticking = true;
-
-        requestAnimationFrame(() => {
-          current = target;
-          onScroll(current);
-          ticking = false;
-        });
       },
       { passive: true }
     );
@@ -87,66 +121,115 @@
     spacerEl = document.querySelector(".hero-spacer"),
     fcards = [...document.querySelectorAll(".fcard")];
 
-  let lastY = 0;
+  let lastY = scrollY;
+  let heroPassed = false;
+  let heroMetrics = {
+    height: vh(),
+    spacerHeight: 0,
+    maxScroll: 1,
+  };
+  let metricsFramePending = false;
 
-  function onScroll(v) {
-    const h = vh(),
-      spH = spacerEl.offsetHeight,
-      max =
-        (useSmooth
-          ? spH + content.offsetHeight
-          : document.documentElement.scrollHeight) - h;
+  function refreshHeroMetrics() {
+    const height = vh();
+    const spacerHeight = spacerEl.offsetHeight;
+    const scrollHeight = useSmooth
+      ? spacerHeight + content.offsetHeight
+      : document.documentElement.scrollHeight;
+
+    heroMetrics = {
+      height,
+      spacerHeight,
+      maxScroll: Math.max(scrollHeight - height, 1),
+    };
+
+    metricsFramePending = false;
+  }
+
+  function scheduleHeroMetricsRefresh() {
+    if (metricsFramePending) {
+      return;
+    }
+
+    metricsFramePending = true;
+    requestAnimationFrame(refreshHeroMetrics);
+  }
+
+  function setHeroPassed(passed) {
+    if (passed === heroPassed) {
+      return;
+    }
+
+    heroPassed = passed;
+    document.body.classList.toggle("hero-passed", passed);
+  }
+
+  function onScroll(visualY, actualY = visualY) {
+    const {
+      height: h,
+      spacerHeight: spH,
+      maxScroll: max,
+    } = heroMetrics;
 
     const progressValue = Math.min(
-      Math.max(v / max, 0),
+      Math.max(actualY / max, 0),
       1
     );
 
-    progress.style.transform =`scaleX(${progressValue})`;
+    progress.style.transform = `scaleX(${progressValue})`;
 
-    const kText = Math.min(v / (h * 0.55), 1);
-    const kDim = Math.max(
-      0,
-      Math.min(v / Math.max(spH - h, 1), 1)
-    );
+    const isPastHero = visualY >= spH + 2;
+    setHeroPassed(isPastHero);
 
-    heroDim.style.opacity = (kDim * 1.02).toFixed(3);
+    /* Stop touching the hidden fixed hero once the practice section covers it. */
+    if (!isPastHero) {
+      const kText = Math.min(visualY / (h * 0.55), 1);
+      const kDim = Math.max(
+        0,
+        Math.min(visualY / Math.max(spH - h, 1), 1)
+      );
 
-    if (!reduceMotion) {
-      heroInner.style.transform = `translateY(${v * 0.16}px) scale(${
-        1 - kText * 0.06
-      })`;
+      heroDim.style.opacity = (kDim * 1.02).toFixed(3);
 
-      heroInner.style.opacity = (1 - kText * 0.92).toFixed(3);
+      if (!reduceMotion) {
+        const heroY = snapToDevicePixel(visualY * 0.16);
+        const backgroundY = snapToDevicePixel(visualY * 0.045);
 
-      heroBg.style.transform = `scale(${
-        1.06 + kDim * 0.07
-      }) translateY(${v * 0.045}px)`;
+        heroInner.style.transform =
+          `translate3d(0, ${heroY}px, 0) scale(${1 - kText * 0.06})`;
+        heroInner.style.opacity = (1 - kText * 0.92).toFixed(3);
 
-      sealEl.style.opacity = (1 - kText * 2).toFixed(2);
+        heroBg.style.transform =
+          `translate3d(0, ${backgroundY}px, 0) scale(${1.06 + kDim * 0.07})`;
 
-      for (const card of fcards) {
-        const y =
-          Number(card.dataset.start) * h -
-          v * Number(card.dataset.speed);
+        sealEl.style.opacity = (1 - kText * 2).toFixed(2);
 
-        card.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+        for (const card of fcards) {
+          const y = snapToDevicePixel(
+            Number(card.dataset.start) * h -
+            visualY * Number(card.dataset.speed)
+          );
+
+          card.style.transform = `translate3d(0, ${y}px, 0)`;
+        }
       }
     }
 
+    const directionDelta = actualY - lastY;
+
     if (
-      v > 160 &&
-      v > lastY + 1 &&
+      actualY > 160 &&
+      directionDelta > 4 &&
       !document.body.classList.contains("menu-open")
     ) {
       header.classList.add("hide");
-    } else if (v < lastY - 1 || v <= 160) {
+    } else if (directionDelta < -4 || actualY <= 160) {
       header.classList.remove("hide");
     }
 
-    lastY = v;
-    teamScroll(v);
-    spy(v);
+    lastY = actualY;
+    teamScroll(visualY);
+    spy(actualY);
   }
 
   /* ---------- TEAM PARALLAX (pin + card stream) ---------- */
@@ -253,7 +336,9 @@
       `translate3d(0, ${-current}px, 0)`;
   }
 
-  requestAnimationFrame(raf);
+  if (useSmooth) {
+    requestAnimationFrame(raf);
+  }
 
   /* ---------- ANCHORS ---------- */
   function scrollToEl(selector) {
@@ -274,8 +359,8 @@
 
     const offset = selector === "#practice" ? 40 : 110;
 
-    const y =
-      current + element.getBoundingClientRect().top - offset;
+    const baseY = useSmooth ? current : scrollY;
+    const y = baseY + element.getBoundingClientRect().top - offset;
 
     window.scrollTo({
       top: Math.max(y, 0),
@@ -294,30 +379,67 @@
   /* ---------- SCROLL SPY ---------- */
   const spyLinks = document.querySelectorAll("[data-spy]");
   const spySections = ["home", "practice", "about", "faq"];
+  let spyOffsets = [];
 
-  function spy() {
+  function refreshSpyOffsets() {
+    const baseY = useSmooth ? current : scrollY;
+
+    spyOffsets = spySections
+      .filter((id) => id !== "home")
+      .map((id) => {
+        const element = document.getElementById(id);
+
+        return element
+          ? {
+              id,
+              top: baseY + element.getBoundingClientRect().top,
+            }
+          : null;
+      })
+      .filter(Boolean);
+  }
+
+  function spy(v = scrollY) {
     let active = "home";
+    const activationLine = v + vh() * 0.45;
 
-    spySections.forEach((id) => {
-      if (id === "home") {
-        return;
+    for (const section of spyOffsets) {
+      if (section.top < activationLine) {
+        active = section.id;
       }
-
-      const element = document.getElementById(id);
-
-      if (
-        element &&
-        element.getBoundingClientRect().top < vh() * 0.45
-      ) {
-        active = id;
-      }
-    });
+    }
 
     spyLinks.forEach((link) => {
       link.classList.toggle(
         "active",
         link.dataset.spy === active
       );
+    });
+  }
+
+  let spyViewportWidth = innerWidth;
+
+  addEventListener("resize", () => {
+    const widthChanged =
+      Math.abs(innerWidth - spyViewportWidth) > 20;
+
+    if (!isTouch || widthChanged) {
+      scheduleHeroMetricsRefresh();
+      requestAnimationFrame(refreshSpyOffsets);
+    }
+
+    spyViewportWidth = innerWidth;
+  }, { passive: true });
+
+  addEventListener("load", () => {
+    refreshHeroMetrics();
+    refreshSpyOffsets();
+  }, { once: true });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      refreshHeroMetrics();
+      refreshSpyOffsets();
     });
   }
 
@@ -688,7 +810,18 @@
     setTimeout(treeInit, 600);
   }
 
-  addEventListener("resize", drawTree);
+  let treeViewportWidth = innerWidth;
+
+  addEventListener("resize", () => {
+    const widthChanged =
+      Math.abs(innerWidth - treeViewportWidth) > 20;
+
+    if (!isTouch || widthChanged) {
+      drawTree();
+    }
+
+    treeViewportWidth = innerWidth;
+  }, { passive: true });
 
   new IntersectionObserver(
     (entries) => {
@@ -1510,7 +1643,19 @@
   }
 
   alignArc();
-  addEventListener('resize',alignArc);
+
+  let reviewViewportWidth = innerWidth;
+
+  addEventListener('resize', () => {
+    const widthChanged =
+      Math.abs(innerWidth - reviewViewportWidth) > 20;
+
+    if (!isTouch || widthChanged) {
+      alignArc();
+    }
+
+    reviewViewportWidth = innerWidth;
+  }, { passive: true });
 
   people.forEach(el=>{
     el.addEventListener('click',()=>{
@@ -1539,6 +1684,8 @@
   requestAnimationFrame(() => {
     current = scrollY;
     target = scrollY;
-    onScroll(current);
+    refreshHeroMetrics();
+    refreshSpyOffsets();
+    onScroll(current, scrollY);
   });
 })();
