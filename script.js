@@ -656,7 +656,9 @@
     dots = [];
 
   function drawTree() {
-    if (innerWidth < 900) {
+    const mobileTree = innerWidth <= 700;
+
+    if (innerWidth < 900 && !mobileTree) {
       treeSvg.innerHTML =
         treeSvg.innerHTML.split("</defs>")[0] + "</defs>";
 
@@ -693,12 +695,15 @@
         index - (numberOfCards - 1) / 2
       );
 
-      const middleY = Math.min(
-        cy - 24,
-        hy +
-          20 +
-          ((numberOfCards - 1) / 2 - centerDistance) * 44
-      );
+      /* mobile: shared centre trunk, branch out just above each icon */
+      const middleY = mobileTree
+        ? cy - 22
+        : Math.min(
+            cy - 24,
+            hy +
+              20 +
+              ((numberOfCards - 1) / 2 - centerDistance) * 44
+          );
 
       let pathData;
 

@@ -665,9 +665,18 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .tree-grid{padding-top:60px}
 }
 @media(max-width:700px){
-  .tree-grid{grid-template-columns:repeat(2,1fr)}
+  .sec-eyebrow{font-size:.72rem;letter-spacing:.18em;gap:10px;text-align:center}
+  .sec-eyebrow::before,.sec-eyebrow::after{width:20px}
+  #tree-svg{display:block}
+  .tree-grid{grid-template-columns:repeat(2,1fr);padding-top:84px}
   .p-card:nth-child(n){margin-top:0}
   .p-card:nth-child(2n){margin-top:44px}
+  .p-card:nth-child(odd){text-align:left}
+  .p-card:nth-child(odd) .p-tile{margin:0 0 22px}
+  .p-card:nth-child(odd) p{margin:0}
+  .p-card:nth-child(even){text-align:right}
+  .p-card:nth-child(even) .p-tile{margin:0 0 22px auto}
+  .p-card:nth-child(even) p{margin:0 0 0 auto}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3)::before{display:none}
   .stat{padding:44px 16px;border-bottom:1px solid var(--line-soft)}
