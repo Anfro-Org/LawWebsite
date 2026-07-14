@@ -1,6 +1,9 @@
 # HANDOFF — Saleem & Co. website
 
 ## Task completed (latest)
+**Book Appointment hover polish**: the three contact-info icon frames (email / phone / hours) and the **Request Appointment** button now hover like the navbar **Contact Us** button — lift (`scale` + `translateY(-3px)`), gold border + glow shadow, gold gradient wash fading in, light sheen sweeping across. Icon frames are hover-only (not clickable); the submit button keeps its submit role and gains an `:active` press. CSS-only, scoped via `.book-meta i` and `.form-submit .btn-royal` (the success-modal Close button keeps the original gold-fill hover).
+
+## Previous task — team section
 Added an **Our Lead Counsel** team section (between *About the Firm* and *Client Reviews*).
 - A 260vh scroll scene: the title pins center-screen while seven member cards (S & Co. monogram frame + name/role caption) stream upward in two side lanes (4 left / 3 right, alternating), scrubbed to scroll, with velocity-based motion blur. Cards never cross the centered headline.
 - Timing: uniform `data-travel="390"`, starts staggered 34vh apart (180…384) so the stream is continuous and the **pin releases exactly as the last card starts exiting** (384/390 ≈ 98.5% of the pin) — no dead title-only stretch at the end.
@@ -11,7 +14,7 @@ Added an **Our Lead Counsel** team section (between *About the Firm* and *Client
 - The headline renders **above** the cards (`.team-center` z-index 3, `pointer-events:none`) and the center card is timed (`data-start="200"`) to enter only after the pin, so the title is never hidden when the section arrives.
 - Cards are **interactive** like the About frame: pointer tilt (`perspective + rotateX/Y`, TEAM CARD TILT block in `script.js`) and a gold `.shine` sweep on hover.
 
-## Previous task
+## Previous task — client reviews
 Added a **Client Reviews** carousel section (between *About the Firm* and *FAQ*).
 - Vertical 3-position carousel: the **current** review is centered and enlarged, the **coming-up** review peeks smaller/dimmer at the top, the **previous** review shrinks away at the bottom — looping continuously.
 - **Auto-advances every 4s**; **pauses on hover**; **click a peeking avatar to jump** to it. The right-side quote **crossfades** on change.

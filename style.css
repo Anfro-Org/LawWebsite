@@ -413,7 +413,20 @@ html[data-theme="light"] .rv-glow{background:radial-gradient(52% 42% at 56% 44%,
 .book-side p{color:var(--muted);max-width:420px}
 .book-meta{margin-top:44px;display:grid;gap:22px}
 .book-meta div{display:flex;gap:16px;align-items:center}
-.book-meta i{font-style:normal;width:46px;height:44px;border:1px solid var(--line-soft);border-radius:9px;display:grid;place-items:center;color:var(--gold);flex-shrink:0;background:var(--panel)}
+.book-meta i{font-style:normal;width:46px;height:44px;border:1px solid var(--line-soft);border-radius:9px;display:grid;place-items:center;color:var(--gold);flex-shrink:0;background:var(--panel);
+  position:relative;overflow:hidden;isolation:isolate;transform:translateZ(0);
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s,color .3s}
+/* hover treatment mirrors the navbar Contact Us button (glow wash + sheen sweep + lift) */
+.book-meta i::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  background:linear-gradient(90deg,rgba(217,166,63,.20),rgba(240,212,140,.10),rgba(217,166,63,.20));
+  opacity:0;transition:opacity .5s}
+.book-meta i::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,transparent,rgba(240,212,140,.38),transparent);
+  transform:translateX(-105%);transition:transform 1s ease-out}
+.book-meta i:hover{transform:scale(1.06) translateY(-3px);border-color:rgba(232,197,114,.65);color:var(--gold-hi);
+  box-shadow:0 12px 28px rgba(217,166,63,.28),inset 0 1px 0 rgba(255,236,195,.2)}
+.book-meta i:hover::before{opacity:1}
+.book-meta i:hover::after{transform:translateX(105%)}
 .book-meta span{font-family:'Marcellus SC',serif;font-size:.95rem;letter-spacing:.14em;color:var(--muted)}
 form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 .field{position:relative}
@@ -431,7 +444,17 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 .field .underline{position:absolute;bottom:0;left:0;height:1px;width:100%;background:var(--gold-grad);transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease)}
 .field input:focus~.underline,.field select:focus~.underline,.field textarea:focus~.underline{transform:scaleX(1)}
 .form-submit{grid-column:1/-1;margin-top:8px}
-.form-submit .btn-royal{width:100%;padding:16px}
+.form-submit .btn-royal{width:100%;padding:16px;
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s,color .45s var(--ease)}
+/* hover treatment mirrors the navbar Contact Us button instead of the gold fill */
+.form-submit .btn-royal::before{background:linear-gradient(90deg,rgba(217,166,63,.20),rgba(240,212,140,.10),rgba(217,166,63,.20))}
+.form-submit .btn-royal::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(240,212,140,.38),transparent);
+  transform:translateX(-105%);transition:transform 1s ease-out}
+.form-submit .btn-royal:hover{color:var(--gold-hi);letter-spacing:.14em;border-color:rgba(232,197,114,.65);
+  transform:scale(1.02) translateY(-3px);box-shadow:0 18px 44px rgba(217,166,63,.32),inset 0 1px 0 rgba(255,236,195,.2)}
+.form-submit .btn-royal:hover::after{transform:translateX(105%)}
+.form-submit .btn-royal:active{transform:scale(.97)}
 .form-note{grid-column:1/-1;font-size:.78rem;color:var(--muted);letter-spacing:.06em}
 
 /* success */
