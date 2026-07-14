@@ -847,12 +847,175 @@
   const success = document.getElementById("success");
   const successClose = document.getElementById("success-close");
 
+  let serviceFlashEl = serviceSelect;
+  let resetServiceUI = () => {};
+
   if (serviceSelect && serviceField) {
     serviceSelect.addEventListener("change", () => {
       serviceField.classList.toggle(
         "filled",
         Boolean(serviceSelect.value)
       );
+    });
+
+    /* Custom themed dropdown, built over the native select (which stays
+       hidden as the form's source of truth; no JS = native select). */
+    const options = [...serviceSelect.options].filter(
+      (option) => option.value
+    );
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.id = "service-trigger";
+    trigger.className = "select-trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", "service-menu");
+
+    const valueEl = document.createElement("span");
+    valueEl.className = "select-value";
+    valueEl.id = "service-value";
+    trigger.appendChild(valueEl);
+    trigger.insertAdjacentHTML(
+      "beforeend",
+      '<svg class="select-caret" viewBox="0 0 14 9" aria-hidden="true"><path d="M1.5 1.5 7 7.5 12.5 1.5"/></svg>'
+    );
+
+    const svcLabel = serviceField.querySelector("label");
+
+    if (svcLabel) {
+      svcLabel.id = svcLabel.id || "service-label";
+      trigger.setAttribute(
+        "aria-labelledby",
+        svcLabel.id + " service-value"
+      );
+    }
+
+    const menu = document.createElement("ul");
+    menu.id = "service-menu";
+    menu.className = "select-menu";
+    menu.setAttribute("role", "listbox");
+
+    const items = options.map((option, index) => {
+      const li = document.createElement("li");
+
+      li.setAttribute("role", "option");
+      li.setAttribute("aria-selected", "false");
+      li.tabIndex = -1;
+      li.textContent = option.value;
+      li.style.setProperty("--d", index * 45 + "ms"); // entrance stagger
+
+      li.addEventListener("click", () => {
+        choose(index);
+        trigger.focus();
+      });
+
+      li.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          choose(index);
+          trigger.focus();
+        }
+      });
+
+      menu.appendChild(li);
+      return li;
+    });
+
+    serviceSelect.after(trigger);
+    serviceField.appendChild(menu);
+    serviceField.classList.add("has-custom");
+    serviceSelect.tabIndex = -1;
+    serviceSelect.setAttribute("aria-hidden", "true");
+    serviceFlashEl = trigger;
+
+    const isOpen = () => serviceField.classList.contains("open");
+
+    function open() {
+      serviceField.classList.add("open");
+      menu.style.maxHeight = menu.scrollHeight + "px";
+      trigger.setAttribute("aria-expanded", "true");
+    }
+
+    function close() {
+      serviceField.classList.remove("open");
+      menu.style.maxHeight = "0px";
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    function choose(index) {
+      serviceSelect.value = options[index].value;
+      serviceSelect.dispatchEvent(new Event("change"));
+      valueEl.textContent = options[index].value;
+
+      items.forEach((li, i) => {
+        li.setAttribute(
+          "aria-selected",
+          i === index ? "true" : "false"
+        );
+      });
+
+      close();
+    }
+
+    resetServiceUI = () => {
+      valueEl.textContent = "";
+
+      items.forEach((li) => {
+        li.setAttribute("aria-selected", "false");
+      });
+
+      close();
+    };
+
+    trigger.addEventListener("click", () => {
+      isOpen() ? close() : open();
+    });
+
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (!isOpen()) {
+        open();
+      }
+
+      const selected = items.findIndex(
+        (li) => li.getAttribute("aria-selected") === "true"
+      );
+
+      const fallback =
+        event.key === "ArrowDown" ? 0 : items.length - 1;
+
+      items[selected < 0 ? fallback : selected].focus();
+    });
+
+    menu.addEventListener("keydown", (event) => {
+      const index = items.indexOf(document.activeElement);
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        items[Math.min(index + 1, items.length - 1)].focus();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        items[Math.max(index - 1, 0)].focus();
+      }
+    });
+
+    addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && isOpen()) {
+        close();
+        trigger.focus();
+      }
+    });
+
+    addEventListener("pointerdown", (event) => {
+      if (isOpen() && !serviceField.contains(event.target)) {
+        close();
+      }
     });
   }
 
@@ -865,16 +1028,20 @@
 
       let valid = true;
 
-      [name, email, serviceSelect].forEach((field) => {
+      [
+        [name, name],
+        [email, email],
+        [serviceSelect, serviceFlashEl], // the native select is hidden; flash its trigger
+      ].forEach(([field, flashEl]) => {
         if (!field || field.value) {
           return;
         }
 
         valid = false;
-        field.style.borderBottomColor = "#b3452f";
+        flashEl.style.borderBottomColor = "#b3452f";
 
         setTimeout(() => {
-          field.style.borderBottomColor = "";
+          flashEl.style.borderBottomColor = "";
         }, 1800);
       });
 
@@ -884,6 +1051,7 @@
 
       success.classList.add("show");
       form.reset();
+      resetServiceUI();
 
       if (serviceField) {
         serviceField.classList.remove("filled");

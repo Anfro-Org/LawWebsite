@@ -448,9 +448,40 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-bottom-color:transparent}
 .field input:focus~label,.field input:not(:placeholder-shown)~label,
 .field textarea:focus~label,.field textarea:not(:placeholder-shown)~label,
-.field select:focus~label,.field.filled label,.field.static label{top:-14px;font-size:.72rem;color:var(--gold)}
+.field select:focus~label,.field.filled label,.field.static label,.field.open label{top:-14px;font-size:.72rem;color:var(--gold)}
 .field .underline{position:absolute;bottom:0;left:0;height:1px;width:100%;background:var(--gold-grad);transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease)}
-.field input:focus~.underline,.field select:focus~.underline,.field textarea:focus~.underline{transform:scaleX(1)}
+.field input:focus~.underline,.field select:focus~.underline,.field textarea:focus~.underline,.field.open .underline{transform:scaleX(1)}
+
+/* ---- custom themed dropdown (service field; built by script.js over the native select) ---- */
+.field.has-custom select{display:none}
+.select-trigger{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line-soft);padding:14px 2px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left;
+  color:var(--ink);font-family:'Jost',sans-serif;font-weight:300;font-size:1rem;transition:border-color .4s}
+.select-trigger:focus{outline:none}
+.select-trigger:focus-visible{border-bottom-color:var(--gold)}
+.field.open .select-trigger{border-bottom-color:transparent}
+.select-value:empty::after{content:"\00a0"}
+.select-caret{width:14px;height:9px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8;transition:transform .5s var(--ease)}
+.field.open .select-caret{transform:rotate(180deg)}
+.select-menu{list-style:none;margin:0;padding:6px;position:absolute;top:calc(100% + 10px);left:0;right:0;z-index:30;
+  background:linear-gradient(180deg,rgba(217,166,63,.07),rgba(217,166,63,0) 55%),var(--panel-solid);
+  border:1px solid var(--glass-edge);border-radius:12px;
+  box-shadow:var(--glass-shine),0 24px 60px rgba(0,0,0,.45);
+  max-height:0;opacity:0;visibility:hidden;overflow:hidden;transform:translateY(-8px);
+  transition:max-height .55s var(--ease),opacity .35s,transform .55s var(--ease),visibility 0s linear .55s}
+.field.open .select-menu{opacity:1;visibility:visible;transform:none;
+  transition:max-height .55s var(--ease),opacity .3s,transform .55s var(--ease)}
+.select-menu li{padding:11px 14px;border-radius:8px;cursor:pointer;color:var(--muted);
+  font-family:'Jost',sans-serif;font-weight:300;font-size:.98rem;letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .3s,transform .45s var(--ease),color .3s,background .3s,padding-left .3s var(--ease);
+  transition-delay:var(--d,0s),var(--d,0s),0s,0s,0s}
+.field.open .select-menu li{opacity:1;transform:none}
+.select-menu li:hover,.select-menu li:focus-visible{color:var(--gold-hi);outline:none;padding-left:20px;
+  background:linear-gradient(90deg,rgba(230,196,117,.10),rgba(230,196,117,.03) 70%,transparent)}
+.select-menu li[aria-selected="true"]{color:var(--gold-hi)}
+.select-menu li[aria-selected="true"]::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold-grad);flex:none;box-shadow:0 0 10px rgba(217,166,63,.5)}
 .form-submit{grid-column:1/-1;margin-top:8px}
 .form-submit .btn-royal{width:100%;padding:16px;
   transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s,color .45s var(--ease)}
