@@ -5,6 +5,8 @@
 
 **FAQ polish**: the open item's `+`/`×` frame now wears the Contact Us button's *idle* glass look (gold-tint `rgba(230,196,117,.16)` fill, `--glass-edge` border, backdrop blur, `--glass-shine` shadow, gold bars) instead of the solid gold fill; and the whole question row gets a slight hover — gold text, a faint left-to-right gold wash, a 12px indent, and a brightened icon border. CSS-only (`.faq-q`, `.faq-x` rules).
 
+**Reviews interaction polish**: the auto-advance now pauses **only while the cursor is over the quote text** (`#rv-text` mouseenter/leave — the whole-stage listeners are gone), and the text brightens slightly on hover (`color-mix` toward `--ink`, plain `--ink` fallback). The arc stroke is **dash-carved** (`stroke-dasharray` computed in `alignArc()` from the same path bisection) so the line is never visible behind the avatar tiles — needed because side tiles sit at 40% opacity, so no opaque background could hide it. Gaps cover each tile ±10px and recompute on resize.
+
 ## Previous task — team section
 Added an **Our Lead Counsel** team section (between *About the Firm* and *Client Reviews*).
 - A 260vh scroll scene: the title pins center-screen while seven member cards (S & Co. monogram frame + name/role caption) stream upward in two side lanes (4 left / 3 right, alternating), scrubbed to scroll, with velocity-based motion blur. Cards never cross the centered headline.
@@ -19,7 +21,7 @@ Added an **Our Lead Counsel** team section (between *About the Firm* and *Client
 ## Previous task — client reviews
 Added a **Client Reviews** carousel section (between *About the Firm* and *FAQ*).
 - Vertical 3-position carousel: the **current** review is centered and enlarged, the **coming-up** review peeks smaller/dimmer at the top, the **previous** review shrinks away at the bottom — looping continuously.
-- **Auto-advances every 4s**; **pauses on hover**; **click a peeking avatar to jump** to it. The right-side quote **crossfades** on change.
+- **Auto-advances every 4s**; **pauses while the cursor is over the quote text**; **click a peeking avatar to jump** to it. The right-side quote **crossfades** on change.
 - Decorative gold **arc** curves around the avatars; large gold **quotation marks**; a warm **candlelight glow** blooms behind the section.
 - Theme-aware (dark + light), respects reduced-motion, and pauses when off-screen or the tab is hidden. Placeholder names/quotes + silhouette avatars (editable).
 

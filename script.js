@@ -914,15 +914,15 @@
   const arcPath=arc?arc.querySelector('path'):null;
   const AVA_HALF=59; // .rv-ava is 118px wide; inner scales from left centre
 
-  function xOnArc(yRail,railBox,arcBox){
+  function arcAt(yRail,railBox,arcBox){ // path length + rail x where the arc crosses yRail
     const vy=(yRail-(arcBox.top-railBox.top))*620/arcBox.height;
     let lo=0,hi=arcPath.getTotalLength();
     for(let i=0;i<24;i++){
       const mid=(lo+hi)/2;
       if(arcPath.getPointAtLength(mid).y<vy)lo=mid;else hi=mid;
     }
-    const vx=arcPath.getPointAtLength((lo+hi)/2).x;
-    return (arcBox.left-railBox.left)+vx*arcBox.width/200;
+    const len=(lo+hi)/2;
+    return {len,x:(arcBox.left-railBox.left)+arcPath.getPointAtLength(len).x*arcBox.width/200};
   }
 
   function alignArc(){
@@ -930,17 +930,29 @@
     if(!arc.getClientRects().length){ // arc hidden (small screens): CSS fallbacks
       stage.style.removeProperty('--rv-ox-a');
       stage.style.removeProperty('--rv-ox-s');
+      arcPath.removeAttribute('stroke-dasharray');
       return;
     }
     const railBox=rail.getBoundingClientRect(),arcBox=arc.getBoundingClientRect();
     const side=people.find(el=>el.classList.contains('is-next'))||people.find(el=>el.classList.contains('is-prev'));
     const anchor=railBox.width*.06,mid=railBox.height/2;
-    stage.style.setProperty('--rv-ox-a',(xOnArc(mid,railBox,arcBox)-anchor-AVA_HALF).toFixed(1)+'px');
+    let oy=176,s=.56;
+    stage.style.setProperty('--rv-ox-a',(arcAt(mid,railBox,arcBox).x-anchor-AVA_HALF).toFixed(1)+'px');
     if(side){
-      const oy=parseFloat(getComputedStyle(side).getPropertyValue('--oy'))||-176;
-      const s=parseFloat(getComputedStyle(side).getPropertyValue('--s'))||.56;
-      stage.style.setProperty('--rv-ox-s',(xOnArc(mid+oy,railBox,arcBox)-anchor-AVA_HALF*s).toFixed(1)+'px');
+      oy=Math.abs(parseFloat(getComputedStyle(side).getPropertyValue('--oy')))||176;
+      s=parseFloat(getComputedStyle(side).getPropertyValue('--s'))||.56;
+      stage.style.setProperty('--rv-ox-s',(arcAt(mid-oy,railBox,arcBox).x-anchor-AVA_HALF*s).toFixed(1)+'px');
     }
+    // carve gaps into the stroke where the line would show through the (translucent) tiles
+    const PAD=10,total=arcPath.getTotalLength();
+    const slots=side?[[mid-oy,AVA_HALF*s+PAD],[mid,AVA_HALF+PAD],[mid+oy,AVA_HALF*s+PAD]]:[[mid,AVA_HALF+PAD]];
+    const dash=[];let cur=0;
+    slots.forEach(([y,h])=>{
+      const a=arcAt(y-h,railBox,arcBox).len,b=arcAt(y+h,railBox,arcBox).len;
+      dash.push(Math.max(0,a-cur),Math.max(0,b-a));cur=Math.max(cur,b);
+    });
+    dash.push(Math.max(0,total-cur),total);
+    arcPath.setAttribute('stroke-dasharray',dash.map(n=>n.toFixed(1)).join(' '));
   }
 
   alignArc();
@@ -954,8 +966,9 @@
       if(timer){stop();start();} // reset the dwell timer after a manual jump
     });
   });
-  stage.addEventListener('mouseenter',()=>{hovered=true;sync();});
-  stage.addEventListener('mouseleave',()=>{hovered=false;sync();});
+  // pause only while the cursor point is over the quote text itself
+  textEl.addEventListener('mouseenter',()=>{hovered=true;sync();});
+  textEl.addEventListener('mouseleave',()=>{hovered=false;sync();});
   document.addEventListener('visibilitychange',()=>{document.hidden?stop():sync();});
   new IntersectionObserver(es=>{inView=es[0].isIntersecting;sync();},{threshold:.35}).observe(stage);
 })();
