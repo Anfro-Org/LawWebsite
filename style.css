@@ -238,10 +238,29 @@ body.js-smooth #smooth{position:fixed;inset:0 0 auto 0}
   padding:10px 22px;border:1px solid rgba(232,197,114,.55);border-radius:4px;
   background:rgba(14,10,6,.44);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   white-space:nowrap;text-shadow:0 1px 10px rgba(0,0,0,.5)}
-@media(max-width:700px){.fcard{width:38vw}.fcard span{letter-spacing:.14em;padding:8px 12px}}
-.fcard:last-child {
-  left: auto;
-  right: 11%;
+@media (max-width: 700px) {
+  .fcard {
+    width: 38vw;
+  }
+
+  /* Diagonal overlapping mobile arrangement */
+  .fcard:nth-child(1) {
+    left: 6%;
+  }
+
+  .fcard:nth-child(2) {
+    left: 31%;
+  }
+
+  .fcard:nth-child(3) {
+    left: 56%;
+    right: auto;
+  }
+
+  .fcard span {
+    letter-spacing: 0.14em;
+    padding: 8px 12px;
+  }
 }
 .page-content{position:relative;pointer-events:auto;
   background:radial-gradient(60% 42rem at 50% 0%,var(--bg-glow) 0%,var(--bg) 60%);
