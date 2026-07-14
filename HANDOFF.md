@@ -3,6 +3,8 @@
 ## Task completed (latest)
 **Book Appointment hover polish**: the three contact-info icon frames (email / phone / hours) and the **Request Appointment** button now hover like the navbar **Contact Us** button — lift (`scale` + `translateY(-3px)`), gold border + glow shadow, gold gradient wash fading in, light sheen sweeping across. Icon frames are hover-only (not clickable); the submit button keeps its submit role and gains an `:active` press. CSS-only, scoped via `.book-meta i` and `.form-submit .btn-royal` (the success-modal Close button keeps the original gold-fill hover).
 
+**FAQ polish**: the open item's `+`/`×` frame now wears the Contact Us button's *idle* glass look (gold-tint `rgba(230,196,117,.16)` fill, `--glass-edge` border, backdrop blur, `--glass-shine` shadow, gold bars) instead of the solid gold fill; and the whole question row gets a slight hover — gold text, a faint left-to-right gold wash, a 12px indent, and a brightened icon border. CSS-only (`.faq-q`, `.faq-x` rules).
+
 ## Previous task — team section
 Added an **Our Lead Counsel** team section (between *About the Firm* and *Client Reviews*).
 - A 260vh scroll scene: the title pins center-screen while seven member cards (S & Co. monogram frame + name/role caption) stream upward in two side lanes (4 left / 3 right, alternating), scrubbed to scroll, with velocity-based motion blur. Cards never cross the centered headline.

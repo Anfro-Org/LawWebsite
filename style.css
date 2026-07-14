@@ -392,14 +392,21 @@ html[data-theme="light"] .rv-glow{background:radial-gradient(52% 42% at 56% 44%,
 .faq-wrap{max-width:840px;margin:60px auto 0}
 .faq{border-bottom:1px solid var(--line-soft)}
 .faq:first-child{border-top:1px solid var(--line-soft)}
-.faq-q{width:100%;background:none;border:none;color:inherit;display:flex;justify-content:space-between;align-items:center;gap:24px;text-align:left;padding:30px 6px;font-family:'Marcellus',serif;font-size:clamp(1.05rem,2.2vw,1.3rem);transition:color .4s}
-.faq-q:hover{color:var(--gold-hi)}
+.faq-q{width:100%;background:none;border:none;color:inherit;display:flex;justify-content:space-between;align-items:center;gap:24px;text-align:left;padding:30px 6px;font-family:'Marcellus',serif;font-size:clamp(1.05rem,2.2vw,1.3rem);border-radius:10px;
+  transition:color .4s,background .5s var(--ease),padding-left .5s var(--ease)}
+.faq-q:hover{color:var(--gold-hi);padding-left:18px;
+  background:linear-gradient(90deg,rgba(230,196,117,.07),rgba(230,196,117,.02) 70%,transparent)}
+.faq-q:hover .faq-x{border-color:rgba(232,197,114,.5)}
 .faq-x{position:relative;width:36px;height:36px;border:1px solid var(--line);border-radius:9px;flex-shrink:0;transition:.5s var(--ease)}
 .faq-x::before,.faq-x::after{content:"";position:absolute;top:50%;left:50%;background:var(--gold);transition:.5s var(--ease)}
 .faq-x::before{width:12px;height:1px;transform:translate(-50%,-50%)}
 .faq-x::after{width:1px;height:12px;transform:translate(-50%,-50%)}
-.faq.open .faq-x{transform:rotate(135deg);background:var(--gold-grad);border-color:transparent}
-.faq.open .faq-x::before,.faq.open .faq-x::after{background:#1A1207}
+/* open frame = the navbar Contact Us button's idle glass look */
+.faq.open .faq-x,.faq.open .faq-q:hover .faq-x{transform:rotate(135deg);border-color:var(--glass-edge);
+  background:rgba(230,196,117,.16);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:var(--glass-shine),0 10px 26px rgba(0,0,0,.3)}
+.faq.open .faq-x::before,.faq.open .faq-x::after{background:var(--gold-hi)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .6s var(--ease)}
 .faq-a p{padding:0 6px 30px;color:var(--muted);max-width:680px}
 
