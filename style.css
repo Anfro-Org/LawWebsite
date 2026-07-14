@@ -690,6 +690,19 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .rv-rail{min-height:440px;max-width:520px;margin:0 auto}
   .rv-quote{max-width:640px}
 }
+@media(max-width:700px){
+  /* team: staggered two-column zigzag */
+  #team.team-static{padding:90px 0 20px}
+  #team.team-static .team-stage{display:grid;grid-template-columns:1fr 1fr;gap:52px 7vw;padding:0 7vw;align-items:start}
+  #team.team-static .team-center{grid-column:1/-1;margin-bottom:34px;padding:0}
+  #team.team-static .t-card{width:100%;margin:0}
+  #team.team-static .t-card:nth-of-type(even){transform:translateY(38%)!important}
+  #team.team-static .t-card figcaption{margin-top:16px;gap:7px}
+  #team.team-static .t-card figcaption b{font-size:.8rem;letter-spacing:.2em}
+  #team.team-static .t-card figcaption span{font-size:.6rem;letter-spacing:.2em}
+  #team.team-static .t-est{font-size:.4rem;letter-spacing:.16em;bottom:14px}
+  #team.team-static .t-frame::after{inset:9px}
+}
 @media(max-width:560px){
   .rv-arc{display:none}
   .rv-ava{width:96px;height:96px;border-radius:18px}
