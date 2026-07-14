@@ -805,15 +805,7 @@
       lastEl = document.getElementById("mem-last"),
       bioEl = document.getElementById("mem-bio"),
       statsEl = document.getElementById("mem-stats"),
-      sealCta = document.getElementById("mem-seal"),
       memClose = document.getElementById("mem-close");
-
-    /* reuse the hero's starburst seal image for the CTA ring */
-    const sealImg = document.querySelector(".seal img");
-
-    if (sealImg) {
-      document.getElementById("mem-seal-ring").src = sealImg.src;
-    }
 
     let openCard = null,
       flying = false,
@@ -1002,9 +994,7 @@
       }, 780);
     }
 
-    function closeMember(options) {
-      const opts = options || {};
-
+    function closeMember() {
       if (!member.classList.contains("show") || flying) {
         return;
       }
@@ -1019,33 +1009,15 @@
         photoSlot.textContent = "";
         flyer.style.opacity = "0";
 
-        if (openCard && !opts.target) {
+        if (openCard) {
           openCard.focus({ preventScroll: true });
         }
 
         openCard = null;
-
-        if (opts.target) {
-          scrollToEl(opts.target);
-        }
       };
 
       if (reduceMotion || !clone || !openCard) {
         finish();
-        return;
-      }
-
-      /* leaving for another part of the page: no return flight,
-         just let the veil and content fade out first */
-      if (opts.target) {
-        flying = true;
-        clearTimeout(landTimer);
-
-        landTimer = setTimeout(() => {
-          flying = false;
-          finish();
-        }, 580);
-
         return;
       }
 
@@ -1095,11 +1067,6 @@
       }
     });
 
-    sealCta.addEventListener("click", (event) => {
-      event.preventDefault();
-      closeMember({ target: "#book" });
-    });
-
     addEventListener("keydown", (event) => {
       if (!member.classList.contains("show")) {
         return;
@@ -1111,22 +1078,9 @@
       }
 
       if (event.key === "Tab") {
-        /* keep focus inside the dialog */
-        const focusables = [memClose, sealCta];
-        const index = focusables.indexOf(document.activeElement);
-
-        if (event.shiftKey) {
-          if (index <= 0) {
-            event.preventDefault();
-            focusables[focusables.length - 1].focus();
-          }
-        } else if (index === focusables.length - 1) {
-          event.preventDefault();
-          focusables[0].focus();
-        } else if (index === -1) {
-          event.preventDefault();
-          focusables[0].focus();
-        }
+        /* the close button is the dialog's only control */
+        event.preventDefault();
+        memClose.focus();
       }
     });
   }
