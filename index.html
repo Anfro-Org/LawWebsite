@@ -414,9 +414,18 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .tree-grid{padding-top:60px}
 }
 @media(max-width:700px){
-  .tree-grid{grid-template-columns:repeat(2,1fr)}
+  .sec-eyebrow{font-size:.72rem;letter-spacing:.18em;gap:10px;text-align:center}
+  .sec-eyebrow::before,.sec-eyebrow::after{width:20px}
+  #tree-svg{display:block}
+  .tree-grid{grid-template-columns:repeat(2,1fr);padding-top:84px}
   .p-card:nth-child(n){margin-top:0}
   .p-card:nth-child(2n){margin-top:44px}
+  .p-card:nth-child(odd){text-align:left}
+  .p-card:nth-child(odd) .p-tile{margin:0 0 22px}
+  .p-card:nth-child(odd) p{margin:0}
+  .p-card:nth-child(even){text-align:right}
+  .p-card:nth-child(even) .p-tile{margin:0 0 22px auto}
+  .p-card:nth-child(even) p{margin:0 0 0 auto}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3)::before{display:none}
   .stat{padding:44px 16px;border-bottom:1px solid var(--line-soft)}
@@ -888,7 +897,8 @@ const treeSvg=document.getElementById('tree-svg'),tree=document.getElementById('
 const cards=[...document.querySelectorAll('.p-card')];
 let paths=[],dots=[];
 function drawTree(){
-  if(innerWidth<900){treeSvg.innerHTML=treeSvg.innerHTML.split('</defs>')[0]+'</defs>';return;}
+  const mobileTree=innerWidth<=700;
+  if(innerWidth<900&&!mobileTree){treeSvg.innerHTML=treeSvg.innerHTML.split('</defs>')[0]+'</defs>';return;}
   const defs=treeSvg.querySelector('defs').outerHTML;
   const tRect=tree.getBoundingClientRect(),hRect=treeHeading.getBoundingClientRect();
   const hx=hRect.left+hRect.width/2-tRect.left;
@@ -900,7 +910,8 @@ function drawTree(){
     const cx=r.left+r.width/2-tRect.left, cy=r.top-tRect.top-6;
     const rad=14, dir=cx>hx?1:-1;
     const centerDist=Math.abs(i-(n-1)/2);           /* 2.5 outer … 0.5 center */
-    const my=Math.min(cy-24, hy+20+(((n-1)/2)-centerDist)*44); /* outer high, center low */
+    /* mobile: shared centre trunk, branch out just above each icon */
+    const my=mobileTree?cy-22:Math.min(cy-24, hy+20+(((n-1)/2)-centerDist)*44); /* outer high, center low */
     let d;
     if(Math.abs(cx-hx)<rad*2){ d=`M ${hx} ${hy} L ${cx} ${cy}`; }
     else{
