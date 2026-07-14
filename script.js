@@ -793,6 +793,344 @@
     });
   }
 
+  /* ---------- TEAM MEMBER PROFILE ---------- */
+  const member = document.getElementById("member");
+
+  if (member && tcards.length) {
+    const shell = member.querySelector(".mem-shell"),
+      flyer = document.getElementById("mem-flyer"),
+      photoSlot = document.getElementById("mem-photo"),
+      tagsEl = document.getElementById("mem-tags"),
+      firstEl = document.getElementById("mem-first"),
+      lastEl = document.getElementById("mem-last"),
+      bioEl = document.getElementById("mem-bio"),
+      statsEl = document.getElementById("mem-stats"),
+      sealCta = document.getElementById("mem-seal"),
+      memClose = document.getElementById("mem-close");
+
+    /* reuse the hero's starburst seal image for the CTA ring */
+    const sealImg = document.querySelector(".seal img");
+
+    if (sealImg) {
+      document.getElementById("mem-seal-ring").src = sealImg.src;
+    }
+
+    let openCard = null,
+      flying = false,
+      landTimer = 0;
+
+    tcards.forEach((card) => {
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-haspopup", "dialog");
+      card.tabIndex = 0;
+
+      const name = card
+        .querySelector("figcaption b")
+        .textContent.trim();
+
+      card.setAttribute(
+        "aria-label",
+        "View the profile of " + name
+      );
+
+      const view = document.createElement("span");
+      view.className = "t-view";
+      view.setAttribute("aria-hidden", "true");
+      view.innerHTML =
+        '<i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></i>';
+      card.querySelector(".t-frame").appendChild(view);
+
+      card.addEventListener("click", () => openMember(card));
+
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openMember(card);
+        }
+      });
+    });
+
+    function fillProfile(card) {
+      const name = card
+        .querySelector("figcaption b")
+        .textContent.trim();
+
+      const role = card
+        .querySelector("figcaption span")
+        .textContent.trim();
+
+      const parts = name.split(/\s+/);
+      firstEl.textContent = parts.shift();
+      lastEl.textContent = parts.join(" ");
+
+      tagsEl.textContent = "";
+
+      (card.dataset.tags || role).split(",").forEach((tag) => {
+        const chip = document.createElement("span");
+        chip.textContent = tag.trim();
+        tagsEl.appendChild(chip);
+      });
+
+      bioEl.textContent = card.dataset.bio || "";
+      statsEl.textContent = "";
+
+      (card.dataset.stats || "").split(";").forEach((pair) => {
+        if (!pair.trim()) {
+          return;
+        }
+
+        const [num, label] = pair.split("|");
+        const stat = document.createElement("div");
+        stat.className = "mem-stat";
+
+        const b = document.createElement("b");
+        b.textContent = (num || "").trim();
+
+        const s = document.createElement("span");
+        s.textContent = (label || "").trim();
+
+        stat.append(b, s);
+        statsEl.appendChild(stat);
+      });
+    }
+
+    /* clone of a card frame, its type scaled by k so the whole tile
+       grows as one piece while it flies to the k-times-larger slot */
+    function frameClone(card, k) {
+      const src = card.querySelector(".t-frame");
+      const clone = src.cloneNode(true);
+
+      const view = clone.querySelector(".t-view");
+
+      if (view) {
+        view.remove();
+      }
+
+      clone.style.transform = "none";
+      clone.style.transition = "none";
+
+      const mono = clone.querySelector(".t-mono");
+
+      if (mono) {
+        mono.style.fontSize =
+          parseFloat(
+            getComputedStyle(src.querySelector(".t-mono"))
+              .fontSize
+          ) *
+            k +
+          "px";
+      }
+
+      const est = clone.querySelector(".t-est");
+
+      if (est) {
+        est.style.fontSize =
+          parseFloat(
+            getComputedStyle(src.querySelector(".t-est"))
+              .fontSize
+          ) *
+            k +
+          "px";
+
+        est.style.bottom = 20 * k + "px";
+      }
+
+      clone.style.setProperty("--fin", 12 * k + "px");
+      return clone;
+    }
+
+    function openMember(card) {
+      if (flying || member.classList.contains("show")) {
+        return;
+      }
+
+      openCard = card;
+      fillProfile(card);
+
+      /* the tilt effect may have the frame mid-rotation -- settle it
+         so the measured rect matches what the flyer will show */
+      const srcFrame = card.querySelector(".t-frame");
+      srcFrame.style.transition = "none";
+      srcFrame.style.transform = "none";
+
+      document.documentElement.classList.add("mem-lock");
+      member.classList.add("show");
+      shell.scrollTop = 0;
+
+      const srcRect = srcFrame.getBoundingClientRect();
+      const dstRect = photoSlot.getBoundingClientRect();
+      const k = dstRect.width / srcRect.width;
+      const clone = frameClone(card, k);
+
+      if (reduceMotion) {
+        photoSlot.appendChild(clone);
+        member.classList.add("in");
+        memClose.focus({ preventScroll: true });
+        return;
+      }
+
+      flying = true;
+      flyer.style.left = dstRect.left + "px";
+      flyer.style.top = dstRect.top + "px";
+      flyer.style.width = dstRect.width + "px";
+      flyer.style.height = dstRect.height + "px";
+      flyer.style.transition = "none";
+
+      flyer.style.transform = `translate(${
+        srcRect.left - dstRect.left
+      }px, ${srcRect.top - dstRect.top}px) scale(${
+        srcRect.width / dstRect.width
+      }, ${srcRect.height / dstRect.height})`;
+
+      flyer.style.opacity = "1";
+      flyer.appendChild(clone);
+      flyer.getBoundingClientRect();
+
+      flyer.style.transition = "transform .75s var(--ease)";
+      flyer.style.transform = "translate(0px, 0px) scale(1, 1)";
+
+      member.classList.add("in");
+      memClose.focus({ preventScroll: true });
+
+      clearTimeout(landTimer);
+
+      landTimer = setTimeout(() => {
+        photoSlot.appendChild(clone);
+        flyer.style.transition = "none";
+        flyer.style.opacity = "0";
+        flying = false;
+      }, 780);
+    }
+
+    function closeMember(options) {
+      const opts = options || {};
+
+      if (!member.classList.contains("show") || flying) {
+        return;
+      }
+
+      const clone = photoSlot.querySelector(".t-frame");
+      member.classList.remove("in");
+
+      const finish = () => {
+        member.classList.remove("show");
+        document.documentElement.classList.remove("mem-lock");
+        flyer.textContent = "";
+        photoSlot.textContent = "";
+        flyer.style.opacity = "0";
+
+        if (openCard && !opts.target) {
+          openCard.focus({ preventScroll: true });
+        }
+
+        openCard = null;
+
+        if (opts.target) {
+          scrollToEl(opts.target);
+        }
+      };
+
+      if (reduceMotion || !clone || !openCard) {
+        finish();
+        return;
+      }
+
+      /* leaving for another part of the page: no return flight,
+         just let the veil and content fade out first */
+      if (opts.target) {
+        flying = true;
+        clearTimeout(landTimer);
+
+        landTimer = setTimeout(() => {
+          flying = false;
+          finish();
+        }, 580);
+
+        return;
+      }
+
+      flying = true;
+
+      const srcRect = photoSlot.getBoundingClientRect();
+
+      const dstRect = openCard
+        .querySelector(".t-frame")
+        .getBoundingClientRect();
+
+      flyer.style.left = srcRect.left + "px";
+      flyer.style.top = srcRect.top + "px";
+      flyer.style.width = srcRect.width + "px";
+      flyer.style.height = srcRect.height + "px";
+      flyer.style.transition = "none";
+      flyer.style.transform = "translate(0px, 0px) scale(1, 1)";
+      flyer.style.opacity = "1";
+      flyer.appendChild(clone);
+      flyer.getBoundingClientRect();
+
+      flyer.style.transition =
+        "transform .65s var(--ease), opacity .22s linear .5s";
+
+      flyer.style.transform = `translate(${
+        dstRect.left - srcRect.left
+      }px, ${dstRect.top - srcRect.top}px) scale(${
+        dstRect.width / srcRect.width
+      }, ${dstRect.height / srcRect.height})`;
+
+      flyer.style.opacity = "0";
+
+      clearTimeout(landTimer);
+
+      landTimer = setTimeout(() => {
+        flying = false;
+        finish();
+      }, 730);
+    }
+
+    memClose.addEventListener("click", () => closeMember());
+
+    /* a click on the empty space around the profile closes it */
+    shell.addEventListener("mousedown", (event) => {
+      if (event.target === shell) {
+        closeMember();
+      }
+    });
+
+    sealCta.addEventListener("click", (event) => {
+      event.preventDefault();
+      closeMember({ target: "#book" });
+    });
+
+    addEventListener("keydown", (event) => {
+      if (!member.classList.contains("show")) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        closeMember();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        /* keep focus inside the dialog */
+        const focusables = [memClose, sealCta];
+        const index = focusables.indexOf(document.activeElement);
+
+        if (event.shiftKey) {
+          if (index <= 0) {
+            event.preventDefault();
+            focusables[focusables.length - 1].focus();
+          }
+        } else if (index === focusables.length - 1) {
+          event.preventDefault();
+          focusables[0].focus();
+        } else if (index === -1) {
+          event.preventDefault();
+          focusables[0].focus();
+        }
+      }
+    });
+  }
+
   /* ---------- FAQ ---------- */
   document.querySelectorAll(".faq").forEach((item) => {
     const question = item.querySelector(".faq-q");

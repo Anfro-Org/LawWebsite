@@ -353,17 +353,84 @@ html[data-theme="light"] .team-title{color:#8A744A}
 html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
 .t-frame .shine{position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(240,212,140,.15) 50%,transparent 58%);transform:translateX(-70%);transition:transform 1.2s var(--ease);pointer-events:none}
 .t-card:hover .shine{transform:translateX(70%)}
-.t-frame::after{content:"";position:absolute;inset:12px;border:1px solid var(--line-soft);border-radius:3px;pointer-events:none}
+.t-frame::after{content:"";position:absolute;inset:var(--fin,12px);border:1px solid var(--line-soft);border-radius:3px;pointer-events:none}
 .t-mono{font-size:clamp(2.4rem,4.4vw,3.6rem)}
 .t-est{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:.58rem;color:var(--muted)}
 .t-card figcaption{margin-top:26px;text-align:center;display:grid;gap:10px}
 .t-card figcaption b{font-family:'Marcellus SC',serif;font-weight:400;font-size:1.12rem;letter-spacing:.28em;color:var(--ink)}
 .t-card figcaption span{font-family:'Marcellus SC',serif;font-size:.78rem;letter-spacing:.28em;color:var(--muted)}
+/* cards open the member profile */
+.t-card{cursor:pointer}
+.t-card:focus-visible{outline:1px solid var(--gold);outline-offset:8px;border-radius:6px}
+.t-view{position:absolute;inset:0;display:grid;place-items:center;z-index:2;opacity:0;transform:scale(.72);transition:opacity .5s var(--ease),transform .6s var(--ease-back);pointer-events:none}
+.t-view i{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:rgba(230,196,117,.16);border:1px solid var(--glass-edge);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:var(--glass-shine),0 10px 26px rgba(0,0,0,.3)}
+.t-view svg{width:22px;height:22px;stroke:var(--gold-hi);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.t-card:hover .t-view,.t-card:focus-visible .t-view{opacity:1;transform:scale(1)}
 /* static fallback -- small screens / reduced motion */
 #team.team-static{height:auto;overflow:visible;padding:110px 0 40px}
 #team.team-static .team-stage{position:static;height:auto}
 #team.team-static .team-center{position:static;padding:0 6vw;margin-bottom:64px}
 #team.team-static .t-card{position:static;transform:none!important;filter:none!important;width:min(300px,76vw);margin:0 auto 60px}
+
+/* ============ TEAM MEMBER PROFILE ============ */
+html.mem-lock,html.mem-lock body{overflow:hidden}
+#member{position:fixed;inset:0;z-index:80;visibility:hidden}
+#member.show{visibility:visible}
+.mem-veil{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,rgba(36,23,8,.93) 0%,rgba(10,7,4,.96) 62%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;transition:opacity .55s var(--ease)}
+#member.in .mem-veil{opacity:1}
+html[data-theme="light"] .mem-veil{background:radial-gradient(120% 90% at 50% 0%,rgba(246,240,228,.95) 0%,rgba(238,229,211,.97) 62%)}
+.mem-shell{position:relative;height:100%;overflow-y:auto;overscroll-behavior:contain;display:flex}
+.mem-core{position:relative;margin:auto;width:min(1120px,100%);padding:calc(var(--nav-h) - 6px) 5vw 48px}
+.mem-close{position:absolute;top:26px;right:max(4vw,26px);z-index:6;width:52px;height:52px;border-radius:50%;cursor:pointer;
+  background:rgba(230,196,117,.16);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:var(--glass-shine),0 10px 26px rgba(0,0,0,.3);
+  transition:transform .5s var(--ease),border-color .4s}
+.mem-close::before,.mem-close::after{content:"";position:absolute;top:50%;left:50%;width:20px;height:1.5px;background:var(--gold-hi);transform:translate(-50%,-50%) rotate(45deg)}
+.mem-close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.mem-close:hover{transform:rotate(90deg);border-color:rgba(232,197,114,.65)}
+.mem-head{text-align:center;margin-bottom:40px}
+.mem-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:24px}
+.mem-tags span{font-family:'Marcellus SC',serif;font-size:.72rem;letter-spacing:.24em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:8px 18px 7px;background:rgba(217,166,63,.05)}
+.mem-name{font-size:clamp(2.5rem,6.2vw,4.6rem);line-height:1.06;color:var(--ink);letter-spacing:.03em}
+.mem-name .script{font-size:1.18em;margin-right:.14em}
+.mem-grid{display:grid;grid-template-columns:minmax(270px,410px) minmax(0,1.35fr);justify-content:center;align-items:stretch}
+.mem-photo{position:relative;aspect-ratio:3/4;width:min(100%,410px,46vh);justify-self:end}
+#mem-photo .t-frame{position:absolute;inset:0;width:100%;height:100%;cursor:default}
+.mem-panel{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:34px;padding:48px 48px 40px;
+  border:1px solid var(--line-soft);border-left:0;border-radius:0 14px 14px 0;
+  background:radial-gradient(120% 90% at 16% 0%,rgba(217,166,63,.13) 0%,transparent 55%),linear-gradient(165deg,#241708 0%,#1D1509 58%,#17100A 100%)}
+html[data-theme="light"] .mem-panel{background:radial-gradient(120% 90% at 16% 0%,rgba(217,166,63,.16) 0%,transparent 55%),linear-gradient(165deg,#EFE6D2 0%,#E9DDC4 100%)}
+.mem-bio{color:var(--muted);font-size:.98rem;line-height:1.95;max-width:42ch}
+.mem-stats{display:flex;flex-wrap:wrap;gap:26px 56px;border-top:1px solid var(--line-soft);padding-top:30px}
+.mem-stat b{font-family:'Marcellus',serif;font-weight:400;font-size:clamp(2rem,3.2vw,2.8rem);line-height:1.1;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+.mem-stat span{display:block;margin-top:8px;font-family:'Marcellus SC',serif;font-size:.74rem;letter-spacing:.22em;color:var(--muted)}
+.mem-seal{position:absolute;top:-54px;right:36px;width:132px;height:132px;border-radius:50%;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;
+  background:radial-gradient(circle at 50% 38%,rgba(36,23,8,.92),rgba(23,16,10,.66));
+  transform:rotate(-8deg);transition:transform .6s var(--ease)}
+.mem-seal img{position:absolute;inset:0;width:100%;height:100%;animation:spin 18s linear infinite;filter:drop-shadow(0 12px 26px rgba(0,0,0,.4))}
+.mem-seal-txt{position:relative;font-family:'Marcellus SC',serif;font-size:.62rem;letter-spacing:.2em;color:var(--gold-hi);line-height:1.75}
+.mem-seal svg{position:relative;width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s var(--ease)}
+.mem-seal:hover{transform:rotate(0deg) scale(1.09)}
+.mem-seal:hover svg{transform:translate(2px,-2px)}
+/* the frame in flight between a card and the photo slot */
+.mem-flyer{position:absolute;z-index:5;pointer-events:none;opacity:0;transform-origin:top left;will-change:transform}
+.mem-flyer .t-frame{position:absolute;inset:0;width:100%;height:100%}
+/* staged entrance */
+.mem-fx{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease) var(--fd,0s),transform .8s var(--ease) var(--fd,0s)}
+#member.in .mem-fx{opacity:1;transform:none}
+#member:not(.in) .mem-fx{transition-duration:.3s,.3s;transition-delay:0s,0s}
+@media (max-width:900px){
+  .mem-core{padding:96px 6vw 44px}
+  .mem-head{margin-bottom:30px}
+  .mem-grid{grid-template-columns:1fr;justify-items:center}
+  .mem-photo{width:min(66vw,300px);justify-self:center}
+  .mem-panel{width:100%;border:1px solid var(--line-soft);border-radius:0 0 14px 14px;padding:70px 26px 32px;gap:26px}
+  .mem-seal{top:-48px;right:16px;width:112px;height:112px}
+  .mem-stats{gap:20px 36px;padding-top:24px}
+  .mem-close{top:18px;right:18px;width:46px;height:46px}
+}
 
 /* ============ CLIENT REVIEWS ============ */
 #reviews{padding-top:120px;overflow:hidden}
