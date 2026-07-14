@@ -98,7 +98,21 @@ body.cursor-hover #cursor-halo::before{transform:scale(1.22)}
   81%{opacity:.93;filter:brightness(1.02)}}
 @media (pointer:coarse){#cursor-dot,#cursor-ring,#cursor-halo{display:none}}
 @media (pointer:fine){body{cursor:none} a,button,input,select,textarea,label{cursor:none}}
-#progress{position:fixed;top:0;left:0;height:2px;width:0%;background:var(--gold-grad);z-index:70}
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+
+  width: 100%;
+  height: 2px;
+
+  background: var(--gold-grad);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
 
 /* ============ NAV ============ */
 header{position:fixed;top:0;left:0;right:0;z-index:60;height:var(--nav-h);display:flex;align-items:center;transition:transform .55s var(--ease)}
@@ -222,8 +236,16 @@ html{--hero-img:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYE
 @keyframes nudge{0%,100%{transform:translateY(-3px);opacity:.7}50%{transform:translateY(3px);opacity:1}}
 
 /* ============ SMOOTH SCROLL SHELL ============ */
-#smooth{position:relative;z-index:2;pointer-events:none;will-change:transform}
-body.js-smooth #smooth{position:fixed;inset:0 0 auto 0}
+#smooth {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+body.js-smooth #smooth {
+  position: fixed;
+  inset: 0 0 auto 0;
+  will-change: transform;
+}
 .hero-spacer{height:230svh;pointer-events:none}
 /* ---- floating gallery cards (hero fly-through) ---- */
 #float-cards{position:fixed;inset:0;z-index:3;pointer-events:none}
@@ -675,4 +697,20 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .hero-title .ltr{transform:none;opacity:1}
   .hero-eyebrow,.hero-desc{opacity:1;transform:none}
   .reveal{opacity:1;transform:none}
+}
+
+#hero-bg,
+#hero-inner,
+.fcard {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+#hero-bg,
+#hero-inner {
+  will-change: transform, opacity;
+}
+
+.fcard {
+  will-change: transform;
 }

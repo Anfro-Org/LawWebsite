@@ -7,7 +7,28 @@
   const finePointer = matchMedia("(pointer: fine)").matches;
   const isTouch = matchMedia("(pointer: coarse)").matches;
   const useSmooth = finePointer && !reduceMotion;
-  const vh = () => innerHeight;
+ 
+  let stableViewportHeight =
+    document.documentElement.clientHeight;
+
+  let previousViewportWidth = innerWidth;
+
+  const vh = () => stableViewportHeight;
+
+  addEventListener(
+    "resize",
+    () => {
+      const widthChanged =
+        Math.abs(innerWidth - previousViewportWidth) > 20;
+      if (!isTouch || widthChanged) {
+        stableViewportHeight =
+          document.documentElement.clientHeight;
+      }
+
+      previousViewportWidth = innerWidth;
+    },
+    { passive: true }
+  );
 
   /* ---------- SMOOTH SCROLL ENGINE ---------- */
   const smooth = document.getElementById("smooth"),
@@ -15,7 +36,8 @@
     ghost = document.getElementById("ghost");
 
   let target = 0,
-    current = 0;
+  current = 0,
+  ticking = false;
 
   function setGhost() {
     ghost.style.height =
@@ -37,8 +59,19 @@
     addEventListener(
       "scroll",
       () => {
-        current = scrollY;
-        onScroll(current);
+        target = scrollY;
+
+        if (ticking) {
+          return;
+        }
+
+        ticking = true;
+
+        requestAnimationFrame(() => {
+          current = target;
+          onScroll(current);
+          ticking = false;
+        });
       },
       { passive: true }
     );
@@ -54,8 +87,7 @@
     spacerEl = document.querySelector(".hero-spacer"),
     fcards = [...document.querySelectorAll(".fcard")];
 
-  let lastY = 0,
-    ticking = false;
+  let lastY = 0;
 
   function onScroll(v) {
     const h = vh(),
@@ -65,7 +97,12 @@
           ? spH + content.offsetHeight
           : document.documentElement.scrollHeight) - h;
 
-    progress.style.width = Math.min((v / max) * 100, 100) + "%";
+    const progressValue = Math.min(
+      Math.max(v / max, 0),
+      1
+    );
+
+    progress.style.transform =`scaleX(${progressValue})`;
 
     const kText = Math.min(v / (h * 0.55), 1);
     const kDim = Math.max(
@@ -188,17 +225,32 @@
   function raf() {
     if (useSmooth) {
       target = scrollY;
-      current += (target - current) * 0.085;
 
-      if (Math.abs(target - current) < 0.05) {
-        current = target;
+      const distance = target - current;
+
+      if (Math.abs(distance) > 0.05) {
+        current += distance * 0.12;
+
+        if (Math.abs(target - current) < 0.05) {
+          current = target;
+        }
+
+        smooth.style.transform =
+          `translate3d(0, ${-current}px, 0)`;
+
+        onScroll(current);
       }
-
-      smooth.style.transform = `translate3d(0, ${-current}px, 0)`;
-      onScroll(current);
     }
 
     requestAnimationFrame(raf);
+  }
+
+  if (useSmooth) {
+    current = scrollY;
+    target = scrollY;
+
+    smooth.style.transform =
+      `translate3d(0, ${-current}px, 0)`;
   }
 
   requestAnimationFrame(raf);
@@ -1475,10 +1527,18 @@
   new IntersectionObserver(es=>{inView=es[0].isIntersecting;sync();},{threshold:.35}).observe(stage);
 })();
   }
-
   const year = document.getElementById("year");
 
   if (year) {
     year.textContent = new Date().getFullYear();
   }
+  /*
+  * Run the first scroll-state update only after all
+  * variables and functions in this script are initialized.
+  */
+  requestAnimationFrame(() => {
+    current = scrollY;
+    target = scrollY;
+    onScroll(current);
+  });
 })();
