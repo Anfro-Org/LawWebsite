@@ -304,7 +304,13 @@ body.js-smooth #smooth{position:fixed;inset:0 0 auto 0}
 .p-card:hover h3{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* ============ STATS ============ */
-.stats{border-block:1px solid var(--line-soft);margin-top:60px}
+.stats{border-block:1px solid var(--line-soft);margin-top:60px;position:relative}
+/* candlelight washes flanking the stats, reaching down into About;
+   nothing clips them, so the radial falloff blends on every side */
+.stats-glow{position:absolute;top:-12vh;height:calc(100% + 90vh);width:46vw;pointer-events:none;z-index:0;mix-blend-mode:screen}
+.sg-l{left:0;background:radial-gradient(60% 46% at 0% 38%,rgba(250,212,138,.10) 0%,rgba(226,164,74,.055) 36%,rgba(170,115,40,.025) 58%,rgba(120,80,20,.008) 74%,rgba(120,80,20,0) 88%)}
+.sg-r{right:0;background:radial-gradient(60% 46% at 100% 38%,rgba(250,212,138,.10) 0%,rgba(226,164,74,.055) 36%,rgba(170,115,40,.025) 58%,rgba(120,80,20,.008) 74%,rgba(120,80,20,0) 88%)}
+html[data-theme="light"] .stats-glow{mix-blend-mode:multiply;opacity:.55}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
 .stat{padding:66px 20px;text-align:center;position:relative}
 .stat+.stat::before{content:"";position:absolute;left:0;top:26%;height:48%;width:1px;background:var(--line-soft)}
