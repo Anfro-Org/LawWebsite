@@ -703,14 +703,27 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   #team.team-static .t-est{font-size:.4rem;letter-spacing:.16em;bottom:14px}
   #team.team-static .t-frame::after{inset:9px}
 }
-@media(max-width:560px){
+@media(max-width:700px){
+  /* reviews: horizontal fan — active avatar centred, sides raised */
   .rv-arc{display:none}
-  .rv-ava{width:96px;height:96px;border-radius:18px}
-  .rv-person.is-active{--ox:8px}
-  .rv-person.is-next{--oy:-140px}
-  .rv-person.is-prev{--oy:140px}
-  .rv-name{font-size:1.05rem;letter-spacing:.18em}
-  .rv-rail{min-height:380px}
+  .rv-eyebrow{justify-content:center}
+  .rv-eyebrow::after{display:block}
+  .rv-stage{gap:14px;margin-top:26px}
+  .rv-rail{min-height:240px;max-width:none;margin:0}
+  .rv-person{left:50%;top:50%;transform:translate(calc(-50% + var(--ox,0px)),calc(-50% + var(--oy,0px)))}
+  .rv-inner{transform-origin:center center}
+  .rv-name{display:none}
+  .rv-ava{width:104px;height:104px;border-radius:20px}
+  .rv-person.is-active{--ox:0px;--oy:26px;--s:1}
+  .rv-person.is-next{--ox:-122px;--oy:-46px;--s:.56;--op:.4}
+  .rv-person.is-prev{--ox:122px;--oy:-46px;--s:.56;--op:.4}
+  .rv-people::before,.rv-people::after{content:"";position:absolute;top:calc(50% - 24px);width:64px;height:58px;
+    border-bottom:1px solid var(--line);pointer-events:none}
+  .rv-people::before{left:calc(50% - 128px);border-bottom-left-radius:100% 90%}
+  .rv-people::after{right:calc(50% - 128px);border-bottom-right-radius:100% 90%}
+  .rv-quote{max-width:none;margin:0;text-align:center;padding:0 7vw}
+  .rv-text{padding-left:0;font-size:1.02rem}
+  .rv-text::before{left:-6px;top:-16px;font-size:2.4rem}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
