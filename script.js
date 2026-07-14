@@ -615,6 +615,17 @@
     });
   }
 
+  function resetTree() {
+    // rebuilding the SVG discards the old nodes along with their
+    // fill:forwards animations, so a plain redraw fully re-arms the effect
+    if (reduceMotion || !treeDrawn) {
+      return;
+    }
+
+    treeDrawn = false;
+    drawTree();
+  }
+
   function treeInit() {
     drawTree();
   }
@@ -629,8 +640,15 @@
 
   new IntersectionObserver(
     (entries) => {
-      if (!entries[0].isIntersecting) {
+      const entry = entries[entries.length - 1];
+
+      if (!entry.isIntersecting) {
+        resetTree(); // fully out of view: replay on the next visit
         return;
+      }
+
+      if (entry.intersectionRatio < 0.25) {
+        return; // partially visible: neither replay nor reset
       }
 
       drawTree();
@@ -642,24 +660,49 @@
         drawTree();
       }
     },
-    { threshold: 0.25 }
+    { threshold: [0, 0.25] }
   ).observe(tree);
 
   /* ---------- STAT COUNTERS ---------- */
   const statObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
+        const element = entry.target;
+        const suffix = element.dataset.suffix || "";
+
         if (!entry.isIntersecting) {
+          if (reduceMotion || !element._statPlayed) {
+            return;
+          }
+
+          // fully out of view: stop any running count and arm a replay
+          element._statRun = (element._statRun || 0) + 1;
+          element._statPlayed = false;
+          element.textContent = "0" + suffix;
           return;
         }
 
-        const element = entry.target;
+        if (entry.intersectionRatio < 0.6 || element._statPlayed) {
+          return;
+        }
+
+        element._statPlayed = true;
         const targetValue = Number(element.dataset.count);
-        const suffix = element.dataset.suffix || "";
+
+        if (reduceMotion) {
+          element.textContent = targetValue + suffix;
+          return;
+        }
+
         const duration = 1800;
         const startTime = performance.now();
+        const run = (element._statRun = (element._statRun || 0) + 1);
 
         function step(time) {
+          if (element._statRun !== run) {
+            return; // superseded by a reset while off-screen
+          }
+
           const progressValue = Math.min(
             (time - startTime) / duration,
             1
@@ -677,10 +720,9 @@
         }
 
         step(startTime);
-        statObserver.unobserve(element);
       });
     },
-    { threshold: 0.6 }
+    { threshold: [0, 0.6] }
   );
 
   document.querySelectorAll("[data-count]").forEach((element) => {
