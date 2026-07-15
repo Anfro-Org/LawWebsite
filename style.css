@@ -673,7 +673,13 @@ footer{padding:100px 0 44px;border-top:1px solid var(--line-soft);text-align:cen
 .foot-links{display:flex;justify-content:center;gap:34px;margin:44px 0 30px;flex-wrap:wrap}
 .foot-links a{font-family:'Marcellus SC',serif;font-size:.92rem;letter-spacing:.2em;color:var(--muted);transition:color .4s}
 .foot-links a:hover{color:var(--gold-hi)}
-.copyright{font-size:.74rem;color:var(--muted);letter-spacing:.08em}
+.foot-contact{display:flex;justify-content:center;align-items:center;gap:16px 44px;flex-wrap:wrap;margin:0 0 32px}
+.fc-item{display:inline-flex;align-items:center;gap:10px;font-family:'Marcellus SC',serif;font-size:.85rem;letter-spacing:.12em;color:var(--muted);transition:color .4s}
+.fc-item svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+a.fc-item:hover{color:var(--gold-hi)}
+.fc-item span a{transition:color .4s}
+.fc-item span a:hover{color:var(--gold-hi)}
+.fc-item i{font-style:normal;color:var(--gold);opacity:.55;margin:0 8px}
 
 
 /* ============ RESPONSIVE ============ */
