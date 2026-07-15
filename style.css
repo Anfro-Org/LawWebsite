@@ -122,9 +122,17 @@ body.cursor-hover #cursor-halo::before{transform:scale(1.22)}
 header{position:fixed;top:0;left:0;right:0;z-index:60;height:var(--nav-h);display:flex;align-items:center;transition:transform .55s var(--ease)}
 header.hide{transform:translateY(-115%)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;padding-inline:clamp(20px,3vw,44px)}
-.brand{display:flex;flex-direction:column;line-height:1}
-.brand .script{font-size:1.9rem}
-.brand small{font-family:'Inter',sans-serif;font-weight:300;font-size:.53rem;letter-spacing:.34em;color:var(--muted);margin-top:3px}
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.brand-logo {
+  display: block;
+  width: clamp(120px, 12vw, 155px);
+  height: auto;
+  object-fit: contain;
+}
 .nav-pill{
   display:flex;
   align-items:center;
