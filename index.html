@@ -328,21 +328,24 @@
             <div><i>◷</i><span>Mon – Sat · 10:00 – 18:00</span></div>
           </div>
         </div>
-        <form id="book-form" class="reveal d1" novalidate>
+        <form id="book-form" class="reveal d1" action="https://formsubmit.co/ajax/anfaal@anfro.org" method="POST" novalidate>
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none">
           <div class="field">
-            <input type="text" id="f-name" placeholder=" " required autocomplete="name">
+            <input type="text" id="f-name" name="Full Name" placeholder=" " required autocomplete="name">
             <label for="f-name">Full Name</label><span class="underline"></span>
           </div>
           <div class="field">
-            <input type="email" id="f-email" placeholder=" " required autocomplete="email">
+            <input type="email" id="f-email" name="Email Address" placeholder=" " required autocomplete="email">
             <label for="f-email">Email Address</label><span class="underline"></span>
           </div>
           <div class="field">
-            <input type="tel" id="f-phone" placeholder=" " autocomplete="tel">
+            <input type="tel" id="f-phone" name="Phone" placeholder=" " autocomplete="tel">
             <label for="f-phone">Phone</label><span class="underline"></span>
           </div>
           <div class="field" id="service-field">
-            <select id="f-service" required>
+            <select id="f-service" name="Service Required" required>
               <option value="" selected disabled hidden></option>
               <option>Tax Advisory &amp; Planning</option>
               <option>Audit &amp; Assurance</option>
@@ -354,15 +357,15 @@
             <label for="f-service">Service Required</label><span class="underline"></span>
           </div>
           <div class="field static">
-            <input type="date" id="f-date">
+            <input type="date" id="f-date" name="Preferred Date">
             <label for="f-date">Preferred Date</label><span class="underline"></span>
           </div>
           <div class="field">
-            <input type="text" id="f-city" placeholder=" ">
+            <input type="text" id="f-city" name="City" placeholder=" ">
             <label for="f-city">City</label><span class="underline"></span>
           </div>
           <div class="field full">
-            <textarea id="f-msg" placeholder=" " rows="3"></textarea>
+            <textarea id="f-msg" name="Matter Description" placeholder=" " rows="3"></textarea>
             <label for="f-msg">Brief Description of Your Matter</label><span class="underline"></span>
           </div>
           <div class="form-submit"><button type="submit" class="btn-royal">Request Appointment</button></div>

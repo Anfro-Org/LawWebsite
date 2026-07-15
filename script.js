@@ -1526,20 +1526,29 @@
   }
 
   if (form && success && serviceSelect) {
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const name = document.getElementById("f-name");
       const email = document.getElementById("f-email");
+      const submitButton = form.querySelector('[type="submit"]');
 
       let valid = true;
 
       [
-        [name, name],
-        [email, email],
-        [serviceSelect, serviceFlashEl], // the native select is hidden; flash its trigger
-      ].forEach(([field, flashEl]) => {
-        if (!field || field.value) {
+        [name, name, Boolean(name && name.value.trim())],
+        [
+          email,
+          email,
+          Boolean(email && email.value.trim() && email.validity.valid),
+        ],
+        [
+          serviceSelect,
+          serviceFlashEl,
+          Boolean(serviceSelect.value),
+        ], // the native select is hidden; flash its trigger
+      ].forEach(([field, flashEl, isValid]) => {
+        if (!field || isValid) {
           return;
         }
 
@@ -1555,12 +1564,55 @@
         return;
       }
 
-      success.classList.add("show");
-      form.reset();
-      resetServiceUI();
+      const originalButtonText = submitButton.textContent;
+      const formData = new FormData(form);
 
-      if (serviceField) {
-        serviceField.classList.remove("filled");
+      formData.set(
+        "_subject",
+        `New Appointment Request — ${name.value.trim()}`
+      );
+      formData.set("_replyto", email.value.trim());
+      formData.set(
+        "Submitted At",
+        new Date().toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })
+      );
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || result.success === false) {
+          throw new Error(result.message || "Unable to send request.");
+        }
+
+        success.classList.add("show");
+        form.reset();
+        resetServiceUI();
+
+        if (serviceField) {
+          serviceField.classList.remove("filled");
+        }
+      } catch (error) {
+        console.error("Appointment email failed:", error);
+        alert(
+          "Your request could not be sent. Please check your connection and try again."
+        );
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
       }
     });
   }
