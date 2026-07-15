@@ -228,7 +228,10 @@ html{--hero-img:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYE
 /* size is capped by viewport height (vh) too, so on short screens the title
    shrinks and the hero content keeps clear of the navbar and the seal below */
 .hero-title{font-size:min(clamp(5rem,15vw,15rem),22vh);line-height:1.14;margin:6px 0 2px}
-.hero-title .ltr{display:inline-block;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;transform:translateY(110%) rotate(6deg);opacity:0;filter:drop-shadow(0 14px 34px rgba(0,0,0,.45))}
+/* padding enlarges each letter's background box (which the gold gradient is clipped
+   to) so the Forelle script's tall swashes/ascenders on 'l', 'C', etc. stay filled
+   instead of being cut off at the top; negative margins keep spacing/position identical */
+.hero-title .ltr{display:inline-block;padding:.26em .06em .04em;margin:-.26em -.06em 0;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;transform:translateY(110%) rotate(6deg);opacity:0;filter:drop-shadow(0 14px 34px rgba(0,0,0,.45))}
 .hero-title .word{display:inline-block;padding:0 .06em}
 .hero-desc{font-family:'Marcellus SC',serif;letter-spacing:.1em;font-size:min(clamp(1rem,2vw,1.45rem),3.2vh);line-height:1.7;max-width:900px;margin:10px auto 0;opacity:0;transform:translateY(22px);text-shadow:0 2px 24px rgba(0,0,0,.4)}
 .hero-in .hero-eyebrow,.hero-in .hero-desc{opacity:1;transform:none;transition:opacity 1s var(--ease),transform 1s var(--ease)}
