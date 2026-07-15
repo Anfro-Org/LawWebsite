@@ -711,8 +711,8 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .rv-stage{gap:14px;margin-top:26px}
   .rv-rail{min-height:240px;max-width:none;margin:0}
   .rv-person{left:50%;top:50%;transform:translate(calc(-50% + var(--ox,0px)),calc(-50% + var(--oy,0px)))}
-  .rv-inner{transform-origin:center center}
-  .rv-name{display:none}
+  .rv-inner{flex-direction:column;gap:12px;transform-origin:center center}
+  .rv-name{font-size:.8rem;letter-spacing:.22em}
   .rv-ava{width:104px;height:104px;border-radius:20px}
   .rv-person.is-active{--ox:0px;--oy:26px;--s:1}
   .rv-person.is-next{--ox:-122px;--oy:-46px;--s:.56;--op:.4}

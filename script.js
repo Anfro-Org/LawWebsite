@@ -1591,7 +1591,7 @@
 
   function go(i,animate){active=((i%N)+N)%N;place(animate);}
   function next(){go(active+1,true);}
-  function start(){if(timer||reduceMotion)return;timer=setInterval(()=>{if(inView&&!hovered)next();},1500);}
+  function start(){if(timer||reduceMotion)return;timer=setInterval(()=>{if(inView&&!hovered)next();},2250);}
   function stop(){clearInterval(timer);timer=null;}
   function sync(){(inView&&!hovered&&!reduceMotion)?start():stop();}
 
