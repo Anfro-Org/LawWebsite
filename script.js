@@ -238,13 +238,16 @@
     tcards = [...document.querySelectorAll(".t-card")];
 
   const teamMQ = matchMedia("(max-width: 900px)");
+  // Very short (landscape) viewports also drop the pinned parallax for the
+  // static zigzag — keep this height in sync with the CSS @media(max-height:499px).
+  const teamShortMQ = matchMedia("(max-height: 499px)");
 
   let teamStatic = false,
     tBlur = 0,
     tPrevV = null;
 
   function setTeamMode() {
-    teamStatic = reduceMotion || teamMQ.matches;
+    teamStatic = reduceMotion || teamMQ.matches || teamShortMQ.matches;
     teamEl.classList.toggle("team-static", teamStatic);
 
     if (teamStatic) {
@@ -258,6 +261,7 @@
 
   setTeamMode();
   teamMQ.addEventListener("change", setTeamMode);
+  teamShortMQ.addEventListener("change", setTeamMode);
 
   function teamScroll(v) {
     if (teamStatic) return;
