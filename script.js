@@ -655,6 +655,28 @@
   let paths = [],
     dots = [];
 
+  // Layout position relative to the document, ignoring CSS transforms.
+  // Walking the offset* chain (instead of getBoundingClientRect) keeps the
+  // connector geometry correct even while the .reveal cards are still mid
+  // translateY animation on first load — otherwise the tiles get measured at
+  // their pre-animation position and the lines/dots end up drawn inside them.
+  function layoutBox(el) {
+    let left = 0,
+      top = 0;
+
+    for (let node = el; node; node = node.offsetParent) {
+      left += node.offsetLeft;
+      top += node.offsetTop;
+    }
+
+    return {
+      left,
+      top,
+      width: el.offsetWidth,
+      height: el.offsetHeight,
+    };
+  }
+
   function drawTree() {
     const mobileTree = innerWidth <= 700;
 
@@ -666,22 +688,23 @@
     }
 
     const defs = treeSvg.querySelector("defs").outerHTML;
-    const treeRect = tree.getBoundingClientRect();
-    const headingRect = treeHeading.getBoundingClientRect();
+    const treeRect = layoutBox(tree);
+    const headingRect = layoutBox(treeHeading);
 
     const hx =
       headingRect.left +
       headingRect.width / 2 -
       treeRect.left;
 
-    const hy = headingRect.bottom - treeRect.top + 8;
+    const hy =
+      headingRect.top + headingRect.height - treeRect.top + 8;
 
     let svg = "";
     const numberOfCards = cards.length;
 
     cards.forEach((card, index) => {
       const tile = card.querySelector(".p-tile");
-      const tileRect = tile.getBoundingClientRect();
+      const tileRect = layoutBox(tile);
 
       const cx =
         tileRect.left + tileRect.width / 2 - treeRect.left;
