@@ -225,10 +225,12 @@ html{--hero-img:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYE
 .hero-inner{position:relative;z-index:2;text-align:center;width:min(1100px,92vw);padding-top:40px}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:20px;font-family:'Marcellus SC',serif;font-size:clamp(.9rem,1.6vw,1.15rem);letter-spacing:.22em;color:var(--ink);opacity:0;transform:translateY(20px)}
 .hero-eyebrow::before,.hero-eyebrow::after{content:"";width:44px;height:1px;background:var(--ink);opacity:.7}
-.hero-title{font-size:clamp(5rem,15vw,15rem);line-height:1.14;margin:6px 0 2px}
+/* size is capped by viewport height (vh) too, so on short screens the title
+   shrinks and the hero content keeps clear of the navbar and the seal below */
+.hero-title{font-size:min(clamp(5rem,15vw,15rem),22vh);line-height:1.14;margin:6px 0 2px}
 .hero-title .ltr{display:inline-block;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;transform:translateY(110%) rotate(6deg);opacity:0;filter:drop-shadow(0 14px 34px rgba(0,0,0,.45))}
 .hero-title .word{display:inline-block;padding:0 .06em}
-.hero-desc{font-family:'Marcellus SC',serif;letter-spacing:.1em;font-size:clamp(1rem,2vw,1.45rem);line-height:1.7;max-width:900px;margin:10px auto 0;opacity:0;transform:translateY(22px);text-shadow:0 2px 24px rgba(0,0,0,.4)}
+.hero-desc{font-family:'Marcellus SC',serif;letter-spacing:.1em;font-size:min(clamp(1rem,2vw,1.45rem),3.2vh);line-height:1.7;max-width:900px;margin:10px auto 0;opacity:0;transform:translateY(22px);text-shadow:0 2px 24px rgba(0,0,0,.4)}
 .hero-in .hero-eyebrow,.hero-in .hero-desc{opacity:1;transform:none;transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .hero-in .hero-eyebrow{transition-delay:.35s}
 .hero-in .hero-desc{transition-delay:.95s}
@@ -377,7 +379,10 @@ body:not(.js-smooth) .team-stage{position:sticky;top:0}
   font-size:clamp(2.2rem,4.6vw,3.8rem);color:#C9BB94;margin-left:.26em;
   text-shadow:0 6px 44px rgba(217,166,63,.14)}
 html[data-theme="light"] .team-title{color:#8A744A}
-.t-card{position:absolute;top:0;left:var(--x);width:clamp(200px,21vw,330px);z-index:2;
+/* width is also capped by viewport height: the parallax spaces cards apart by a
+   fraction of the viewport height, so on short screens the cards must shrink too
+   or same-lane cards overlap (a designation touching the next card's top) */
+.t-card{position:absolute;top:0;left:var(--x);width:min(clamp(200px,21vw,330px),36vh);z-index:2;
   transform:translate3d(0,120vh,0);will-change:transform,filter}
 .t-frame{aspect-ratio:3/4;position:relative;overflow:hidden;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;
   background:radial-gradient(120% 90% at 62% 14%,rgba(217,166,63,.15) 0%,transparent 55%),linear-gradient(160deg,var(--bg-3),var(--bg-2));
@@ -652,9 +657,27 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
 
 /* ============ RESPONSIVE ============ */
 @media(max-width:1150px){
-  .tree-grid{grid-template-columns:repeat(3,1fr);gap:52px 26px;padding-top:90px}
+  /* Tablet + mobile: use the same central-trunk zigzag as phones. The desktop
+     3-column "fan" ran its connector lines straight down through the icon boxes
+     to reach the second row; the two-column trunk branches beside each tile so
+     the lines never cross a box. */
+  #tree-svg{display:block}
+  .tree-grid{grid-template-columns:repeat(2,1fr);gap:52px 26px;padding-top:96px}
   .p-card:nth-child(n){margin-top:0}
-  .p-card:nth-child(3n+2){margin-top:56px}
+  .p-card:nth-child(2n){margin-top:44px}
+  .p-card:nth-child(odd){text-align:left}
+  .p-card:nth-child(odd) .p-tile{margin:0 0 22px}
+  .p-card:nth-child(odd) p{margin:0}
+  .p-card:nth-child(even){text-align:right}
+  .p-card:nth-child(even) .p-tile{margin:0 0 22px auto}
+  .p-card:nth-child(even) p{margin:0 0 0 auto}
+}
+@media(min-width:701px) and (max-width:1150px){
+  /* a little larger on tablets than on phones */
+  .p-tile{width:104px;height:104px}
+  .p-tile svg{width:42px;height:42px}
+  .p-card h3{font-size:1.18rem}
+  .p-card p{font-size:.9rem;max-width:260px}
 }
 @media(max-width:1020px){
   .nav-pill{display:none}
@@ -664,23 +687,11 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
 @media(max-width:1150px) and (min-width:981px){
   .rv-name{font-size:1.02rem;letter-spacing:.18em}
 }
-@media(max-width:900px){
-  #tree-svg{display:none}
-  .tree-grid{padding-top:60px}
-}
 @media(max-width:700px){
   .sec-eyebrow{font-size:.72rem;letter-spacing:.18em;gap:10px;text-align:center}
   .sec-eyebrow::before,.sec-eyebrow::after{width:20px}
-  #tree-svg{display:block}
-  .tree-grid{grid-template-columns:repeat(2,1fr);padding-top:84px}
-  .p-card:nth-child(n){margin-top:0}
-  .p-card:nth-child(2n){margin-top:44px}
-  .p-card:nth-child(odd){text-align:left}
-  .p-card:nth-child(odd) .p-tile{margin:0 0 22px}
-  .p-card:nth-child(odd) p{margin:0}
-  .p-card:nth-child(even){text-align:right}
-  .p-card:nth-child(even) .p-tile{margin:0 0 22px auto}
-  .p-card:nth-child(even) p{margin:0 0 0 auto}
+  /* the two-column zigzag + trunk lines are inherited from the <=1150 block */
+  .tree-grid{padding-top:84px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3)::before{display:none}
   .stat{padding:44px 16px;border-bottom:1px solid var(--line-soft)}
@@ -729,6 +740,38 @@ footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:
   .rv-text{padding-left:0;font-size:1.02rem}
   .rv-text::before{left:-6px;top:-16px;font-size:2.4rem}
 }
+
+/* ===== SHORT-VIEWPORT (height) FIXES ===== */
+/* Hero: keep the eyebrow, title, paragraph and seal all inside a short viewport
+   (landscape phones, small laptops) so nothing slides under the navbar or the
+   spinning seal. Sizes are driven down as the available height shrinks. */
+@media (max-height:760px){
+  .hero-inner{padding-top:0}
+  .hero-title{margin:2px 0}
+  .hero-desc{margin-top:6px}
+  .seal{width:84px;height:84px;bottom:18px}
+}
+@media (max-height:620px){
+  .hero-eyebrow{font-size:.74rem;letter-spacing:.16em;gap:12px}
+  .hero-eyebrow::before,.hero-eyebrow::after{width:26px}
+  .hero-desc{line-height:1.5;max-width:760px}
+  .seal{width:64px;height:64px;bottom:12px}
+}
+@media (max-height:480px){
+  /* too little room for the scroll seal — drop it rather than overlap the text */
+  .seal{display:none}
+  .hero-desc{font-size:min(clamp(.82rem,2vw,1rem),3vh)}
+}
+
+/* Team: on short viewports the parallax spaces the cards more tightly, so trim
+   the caption block to match the smaller cards and avoid text touching a card. */
+@media (max-height:680px){
+  .t-mono{font-size:clamp(1.7rem,4.4vw,3rem)}
+  .t-card figcaption{margin-top:14px;gap:6px}
+  .t-card figcaption b{font-size:.95rem;letter-spacing:.2em}
+  .t-card figcaption span{font-size:.7rem;letter-spacing:.22em}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .hero-spacer{height:100svh}

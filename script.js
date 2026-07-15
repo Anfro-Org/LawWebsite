@@ -678,14 +678,11 @@
   }
 
   function drawTree() {
-    const mobileTree = innerWidth <= 700;
-
-    if (innerWidth < 900 && !mobileTree) {
-      treeSvg.innerHTML =
-        treeSvg.innerHTML.split("</defs>")[0] + "</defs>";
-
-      return;
-    }
+    // Tablets and phones (<=1150px) share the central-trunk geometry: the grid
+    // is a two-column zigzag there, so a single trunk branching beside each tile
+    // keeps the lines out of the icon boxes. Above that, the six-across desktop
+    // fan is used. Keep this breakpoint in sync with the CSS @media(max-width:1150px).
+    const mobileTree = innerWidth <= 1150;
 
     const defs = treeSvg.querySelector("defs").outerHTML;
     const treeRect = layoutBox(tree);
