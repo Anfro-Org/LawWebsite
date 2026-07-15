@@ -658,8 +658,18 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 
 /* ============ FOOTER ============ */
 footer{padding:100px 0 44px;border-top:1px solid var(--line-soft);text-align:center}
-footer .script{font-size:clamp(3.4rem,9vw,6rem)}
-footer .foot-tag{font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:.82rem;color:var(--muted);margin-top:8px}
+.footer-logo-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-logo {
+  display: block;
+  width: clamp(240px, 34vw, 400px);
+  height: auto;
+  object-fit: contain;
+}
 .foot-links{display:flex;justify-content:center;gap:34px;margin:44px 0 30px;flex-wrap:wrap}
 .foot-links a{font-family:'Marcellus SC',serif;font-size:.92rem;letter-spacing:.2em;color:var(--muted);transition:color .4s}
 .foot-links a:hover{color:var(--gold-hi)}
