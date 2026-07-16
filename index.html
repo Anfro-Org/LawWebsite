@@ -436,10 +436,17 @@
 <!-- SUCCESS -->
 <div id="success" role="dialog" aria-modal="true" aria-labelledby="success-title">
   <div class="success-card">
-    <div class="stamp"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
-    <h3 id="success-title">Request <span class="script gold-text" style="font-size:1.3em">received</span></h3>
-    <p>Thank you. Your appointment request has been noted — our office will contact you shortly to confirm the details.</p>
-    <button class="btn-royal" id="success-close">Close</button>
+    <button type="button" class="success-close" id="success-close" aria-label="Close"></button>
+    <div class="stamp">
+      <span class="stamp-star" aria-hidden="true"></span>
+      <svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>
+    </div>
+    <h3 id="success-title" class="script"><span>Request</span> <span class="gold-text">received</span></h3>
+    <p>Thank you. Your request has been noted. Our office will contact you shortly.</p>
+    <div class="success-sign">
+      <span class="script gold-text">Saleem &amp; Co.</span>
+      <small>Tax <i>|</i> Audit <i>|</i> Corporate Law</small>
+    </div>
   </div>
 </div>
 

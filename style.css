@@ -647,14 +647,44 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 /* success */
 #success{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(10,7,4,.7);backdrop-filter:blur(10px);opacity:0;visibility:hidden;transition:.5s}
 #success.show{opacity:1;visibility:visible}
-.success-card{text-align:center;padding:70px 50px;border:1px solid var(--line);border-radius:14px;background:var(--panel-solid);max-width:460px;width:92vw;transform:scale(.92);transition:transform .6s var(--ease-back)}
+/* card treatment mirrors the Request Appointment button — glass fill, gold edge, inner shine */
+.success-card{position:relative;text-align:center;padding:64px 50px 44px;max-width:480px;width:92vw;
+  border:1px solid var(--glass-edge);border-radius:18px;
+  background:linear-gradient(180deg,rgba(217,166,63,.10),rgba(217,166,63,0) 60%),var(--panel-solid);
+  backdrop-filter:blur(22px) saturate(1.35);-webkit-backdrop-filter:blur(22px) saturate(1.35);
+  box-shadow:var(--glass-shine),0 30px 80px rgba(0,0,0,.5);
+  transform:scale(.92);transition:transform .6s var(--ease-back)}
+.success-card::before{content:"";position:absolute;inset:14px;border:1px solid var(--line);border-radius:8px;pointer-events:none}
 #success.show .success-card{transform:scale(1)}
-.success-card .stamp{width:92px;height:92px;margin:0 auto 24px;border-radius:18px;border:1.5px solid var(--gold);display:grid;place-items:center}
-.success-card .stamp svg{width:34px;height:34px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-dasharray:60;stroke-dashoffset:60}
+/* revolving gold seal behind the tick */
+.success-card .stamp{position:relative;width:112px;height:112px;margin:0 auto 28px;display:grid;place-items:center}
+.stamp-star{position:absolute;inset:0;animation:spin 14s linear infinite;filter:drop-shadow(0 12px 26px rgba(217,166,63,.28))}
+.stamp-star::before,.stamp-star::after{content:"";position:absolute;inset:13px;border-radius:19%;background:var(--gold-grad)}
+.stamp-star::after{transform:rotate(45deg)}
+.success-card .stamp svg{position:relative;z-index:1;width:44px;height:44px;stroke:#2A1D0C;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60}
 #success.show .stamp svg{animation:draw 1s var(--ease) .35s forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
-.success-card h3{font-size:1.6rem;margin-bottom:10px}
-.success-card p{color:var(--muted);font-size:.95rem;margin-bottom:28px}
+.success-card h3{font-size:clamp(2.2rem,7vw,2.7rem);font-weight:500;margin-bottom:16px}
+.success-card h3 .gold-text{font-size:1.08em}
+.success-card p{color:var(--muted);font-size:.95rem;margin:0 auto;max-width:34ch}
+/* firm signature */
+.success-sign{margin-top:32px}
+.success-sign .script{display:block;font-size:1.65rem;line-height:1.2}
+.success-sign small{display:block;margin-top:8px;font-family:'Marcellus SC',serif;font-size:.58rem;letter-spacing:.32em;color:var(--muted);text-transform:uppercase}
+.success-sign small i{font-style:normal;color:var(--gold);opacity:.7;margin:0 4px}
+/* corner close — same treatment as the counsel-profile close button */
+.success-close{position:absolute;top:-18px;right:-18px;z-index:2;width:52px;height:52px;border-radius:50%;cursor:pointer;
+  background:rgba(230,196,117,.16);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:var(--glass-shine),0 10px 26px rgba(0,0,0,.3);
+  transition:transform .5s var(--ease),border-color .4s}
+.success-close::before,.success-close::after{content:"";position:absolute;top:50%;left:50%;width:20px;height:1.5px;background:var(--gold-hi);transform:translate(-50%,-50%) rotate(45deg)}
+.success-close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.success-close:hover{transform:rotate(90deg);border-color:rgba(232,197,114,.65)}
+@media (max-width:560px){
+  .success-card{padding:56px 30px 38px}
+  .success-close{top:-10px;right:-6px;width:46px;height:46px}
+}
 
 /* ============ FOOTER ============ */
 footer{padding:100px 0 44px;border-top:1px solid var(--line-soft);text-align:center}
