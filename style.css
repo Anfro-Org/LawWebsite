@@ -667,7 +667,15 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:34px 28px}
 .success-card p{color:var(--muted);font-size:.95rem;margin:0 auto;max-width:34ch}
 /* firm signature */
 .success-sign{margin-top:32px}
-.success-sign .script{display:block;font-size:1.65rem;line-height:1.2}
+.success-logo {
+  display: block;
+  width: 135px;
+  height: auto;
+  max-height: 55px;
+  margin: 0 auto;
+  object-fit: contain;
+  transform: translateY(12px);
+}
 .success-sign small{display:block;margin-top:8px;font-family:'Marcellus SC',serif;font-size:.58rem;letter-spacing:.32em;color:var(--muted);text-transform:uppercase}
 .success-sign small i{font-style:normal;color:var(--gold);opacity:.7;margin:0 4px}
 /* corner close — counsel-profile close shape, hover mirrors the navbar Contact Us button */
