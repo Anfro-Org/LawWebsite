@@ -1148,17 +1148,8 @@
       clone.style.transform = "none";
       clone.style.transition = "none";
 
-      const mono = clone.querySelector(".t-mono");
-
-      if (mono) {
-        mono.style.fontSize =
-          parseFloat(
-            getComputedStyle(src.querySelector(".t-mono"))
-              .fontSize
-          ) *
-            k +
-          "px";
-      }
+      /* .t-mono font-size is handled responsively in CSS via a container
+         query on the frame, so the brand line always fits after scaling */
 
       const est = clone.querySelector(".t-est");
 

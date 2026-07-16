@@ -371,9 +371,11 @@ html[data-theme="light"] .stats-glow{mix-blend-mode:multiply;opacity:.55}
 .about-visual{position:relative;perspective:900px}
 .about-frame{aspect-ratio:4/5;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:4px;
   background:radial-gradient(120% 90% at 70% 12%,rgba(217,166,63,.14) 0%,transparent 55%),linear-gradient(160deg,var(--bg-3),var(--bg-2));
-  transform-style:preserve-3d;transition:transform .2s linear;box-shadow:var(--shadow);display:grid;place-items:center}
+  transform-style:preserve-3d;transition:transform .2s linear;box-shadow:var(--shadow);display:grid;place-items:center;container-type:inline-size}
 .about-frame::after{content:"";position:absolute;inset:14px;border:1px solid var(--line-soft);border-radius:2px;pointer-events:none}
-.about-frame .big-script{font-size:clamp(4rem,9vw,7rem)}
+/* brand line sized from the frame's own width (container query) so
+   "Saleem & Co." always stays on one line with room to breathe on both sides */
+.about-frame .big-script{white-space:nowrap;font-size:clamp(2rem,18cqw,7rem)}
 .about-frame .est{position:absolute;bottom:34px;font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:.8rem;color:var(--muted)}
 .about-frame .shine{position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(240,212,140,.15) 50%,transparent 58%);transform:translateX(-70%);transition:transform 1.2s var(--ease);pointer-events:none}
 .about-visual:hover .shine{transform:translateX(70%)}
@@ -400,14 +402,16 @@ html[data-theme="light"] .team-title{color:#8A744A}
    or same-lane cards overlap (a designation touching the next card's top) */
 .t-card{position:absolute;top:0;left:var(--x);width:min(clamp(200px,21vw,330px),36vh);z-index:2;
   transform:translate3d(0,120vh,0);will-change:transform,filter}
-.t-frame{aspect-ratio:3/4;position:relative;overflow:hidden;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;
+.t-frame{aspect-ratio:3/4;position:relative;overflow:hidden;display:grid;place-items:center;container-type:inline-size;border:1px solid var(--line);border-radius:6px;
   background:radial-gradient(120% 90% at 62% 14%,rgba(217,166,63,.15) 0%,transparent 55%),linear-gradient(160deg,var(--bg-3),var(--bg-2));
   box-shadow:0 34px 80px rgba(0,0,0,.5);transition:transform .2s linear}
 html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
 .t-frame .shine{position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(240,212,140,.15) 50%,transparent 58%);transform:translateX(-70%);transition:transform 1.2s var(--ease);pointer-events:none}
 .t-card:hover .shine{transform:translateX(70%)}
 .t-frame::after{content:"";position:absolute;inset:var(--fin,12px);border:1px solid var(--line-soft);border-radius:3px;pointer-events:none}
-.t-mono{font-size:clamp(2.4rem,4.4vw,3.6rem)}
+/* brand line scales with the card width (container query) and stays on one
+   line with side spacing, so "Saleem & Co." fits at every card/screen size */
+.t-mono{white-space:nowrap;font-size:clamp(1.4rem,19cqw,5rem)}
 .t-est{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:.58rem;color:var(--muted)}
 .t-card figcaption{margin-top:26px;text-align:center;display:grid;gap:10px}
 .t-card figcaption b{font-family:'Marcellus SC',serif;font-weight:400;font-size:1.12rem;letter-spacing:.28em;color:var(--ink)}
@@ -870,7 +874,6 @@ a.fc-item:hover{color:var(--gold-hi)}
 /* Team: on short viewports the parallax spaces the cards more tightly, so trim
    the caption block to match the smaller cards and avoid text touching a card. */
 @media (max-height:680px){
-  .t-mono{font-size:clamp(1.7rem,4.4vw,3rem)}
   .t-card figcaption{margin-top:14px;gap:6px}
   .t-card figcaption b{font-size:.95rem;letter-spacing:.2em}
   .t-card figcaption span{font-size:.7rem;letter-spacing:.22em}
