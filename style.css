@@ -729,6 +729,13 @@ a.fc-item:hover{color:var(--gold-hi)}
 .fc-item span a{transition:color .4s}
 .fc-item span a:hover{color:var(--gold-hi)}
 .fc-item i{font-style:normal;color:var(--gold);opacity:.55;margin:0 8px}
+@media (max-width:560px){
+  .foot-contact{flex-direction:column;align-items:center;gap:16px;margin-bottom:0}
+  .fc-whatsapp{order:1}
+  .fc-phone{order:2}
+  .fc-location{order:3;align-items:flex-start;max-width:30ch;text-align:left}
+  .fc-location svg{margin-top:2px}
+}
 
 
 /* ============ RESPONSIVE ============ */
