@@ -375,7 +375,7 @@ html[data-theme="light"] .stats-glow{mix-blend-mode:multiply;opacity:.55}
 .about-frame::after{content:"";position:absolute;inset:14px;border:1px solid var(--line-soft);border-radius:2px;pointer-events:none}
 /* brand line sized from the frame's own width (container query) so
    "Saleem & Co." always stays on one line with room to breathe on both sides */
-.about-frame .big-script{white-space:nowrap;font-size:clamp(2rem,18cqw,7rem)}
+.about-frame .big-script{white-space:nowrap;font-size:clamp(1.8rem,15cqw,6rem)}
 .about-frame .est{position:absolute;bottom:34px;font-family:'Marcellus SC',serif;letter-spacing:.4em;font-size:.8rem;color:var(--muted)}
 .about-frame .shine{position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(240,212,140,.15) 50%,transparent 58%);transform:translateX(-70%);transition:transform 1.2s var(--ease);pointer-events:none}
 .about-visual:hover .shine{transform:translateX(70%)}
@@ -411,7 +411,7 @@ html[data-theme="light"] .t-frame{box-shadow:0 30px 60px rgba(120,85,20,.14)}
 .t-frame::after{content:"";position:absolute;inset:var(--fin,12px);border:1px solid var(--line-soft);border-radius:3px;pointer-events:none}
 /* brand line scales with the card width (container query) and stays on one
    line with side spacing, so "Saleem & Co." fits at every card/screen size */
-.t-mono{white-space:nowrap;font-size:clamp(1.4rem,19cqw,5rem)}
+.t-mono{white-space:nowrap;font-size:clamp(1.2rem,16cqw,4.4rem)}
 .t-est{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:.58rem;color:var(--muted)}
 .t-card figcaption{margin-top:26px;text-align:center;display:grid;gap:10px}
 .t-card figcaption b{font-family:'Marcellus SC',serif;font-weight:400;font-size:1.12rem;letter-spacing:.28em;color:var(--ink)}
