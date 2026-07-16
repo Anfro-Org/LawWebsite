@@ -1163,14 +1163,8 @@
       const est = clone.querySelector(".t-est");
 
       if (est) {
-        est.style.fontSize =
-          parseFloat(
-            getComputedStyle(src.querySelector(".t-est"))
-              .fontSize
-          ) *
-            k +
-          "px";
-
+        /* font-size is handled responsively in CSS via a container query on
+           the frame, so the est line always fits; only its offset scales */
         est.style.bottom = 20 * k + "px";
       }
 
