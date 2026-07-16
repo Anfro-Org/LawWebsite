@@ -975,6 +975,39 @@
     });
   }
 
+  /* ---------- HERO FLOAT-CARD TILT ---------- */
+  if (finePointer && !reduceMotion) {
+    document.querySelectorAll(".fcard").forEach((card) => {
+      const inner = card.querySelector(".fc-inner");
+
+      card.addEventListener("mousemove", (event) => {
+        const rect = card.getBoundingClientRect();
+
+        const x =
+          (event.clientX - rect.left) / rect.width - 0.5;
+
+        const y =
+          (event.clientY - rect.top) / rect.height - 0.5;
+
+        inner.style.transform = `rotateY(${
+          x * 10
+        }deg) rotateX(${-y * 10}deg)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        inner.style.transition =
+          "transform .8s cubic-bezier(.22,1,.36,1)";
+
+        inner.style.transform = "";
+
+        setTimeout(() => {
+          inner.style.transition =
+            "transform .2s linear";
+        }, 800);
+      });
+    });
+  }
+
   /* ---------- TEAM CARD TILT ---------- */
   if (finePointer && !reduceMotion) {
     tcards.forEach((card) => {

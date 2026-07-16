@@ -267,12 +267,17 @@ body.js-smooth #smooth {
 /* ---- floating gallery cards (hero fly-through) ---- */
 #float-cards{position:fixed;inset:0;z-index:3;pointer-events:none}
 .fcard{position:absolute;top:0;left:var(--px);width:clamp(190px,23vw,330px);aspect-ratio:3/4;
-  border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  transform:translate3d(0,120vh,0);pointer-events:auto;perspective:900px}
+/* the parallax owns .fcard's transform, so the About-card tilt lives on this inner surface */
+.fc-inner{position:absolute;inset:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;
   background-image:var(--hero-img);background-size:320%;background-position:var(--crop);
   box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.2);
-  display:grid;place-items:center;transform:translate3d(0,120vh,0);
-  filter:saturate(.92) brightness(.92)}
-.fcard::before{content:"";position:absolute;inset:10px;border:1px solid rgba(232,197,114,.28);border-radius:4px}
+  display:grid;place-items:center;
+  filter:saturate(.92) brightness(.92);
+  transform-style:preserve-3d;transition:transform .2s linear}
+.fc-inner::before{content:"";position:absolute;inset:10px;border:1px solid rgba(232,197,114,.28);border-radius:4px}
+.fcard .shine{position:absolute;inset:-40%;z-index:3;background:linear-gradient(115deg,transparent 42%,rgba(240,212,140,.15) 50%,transparent 58%);transform:translateX(-70%);transition:transform 1.2s var(--ease);pointer-events:none}
+.fcard:hover .shine{transform:translateX(70%)}
 .fcard span{position:relative;font-family:'Marcellus SC',serif;font-size:clamp(.72rem,1.1vw,.95rem);letter-spacing:.24em;color:#F6EDD9;
   padding:10px 22px;border:1px solid rgba(232,197,114,.55);border-radius:4px;
   background:rgba(14,10,6,.44);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -944,16 +949,19 @@ body.hero-passed #float-cards {
 
   /* A CSS filter and a 90px shadow were being repainted on every card frame. */
   .fcard {
-    filter: none;
     contain: layout paint style;
     isolation: isolate;
+  }
+
+  .fc-inner {
+    filter: none;
     box-shadow:
       0 18px 42px rgba(0, 0, 0, 0.48),
       inset 0 0 0 1px rgba(0, 0, 0, 0.2);
   }
 
   /* Replaces the old brightness filter with a cheap static overlay. */
-  .fcard::after {
+  .fc-inner::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -962,7 +970,7 @@ body.hero-passed #float-cards {
     background: rgba(14, 10, 6, 0.08);
   }
 
-  .fcard::before {
+  .fc-inner::before {
     z-index: 1;
   }
 
