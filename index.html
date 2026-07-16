@@ -436,10 +436,22 @@
 <!-- SUCCESS -->
 <div id="success" role="dialog" aria-modal="true" aria-labelledby="success-title">
   <div class="success-card">
-    <button type="button" class="success-close" id="success-close" aria-label="Close"></button>
+    <button type="button" class="success-close" id="success-close" aria-label="Close"><span aria-hidden="true"></span></button>
     <div class="stamp">
-      <span class="stamp-star" aria-hidden="true"></span>
-      <svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>
+      <svg class="stamp-star" viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="stamp-gold" x1="22" y1="16" x2="102" y2="110" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#EFCF83"/>
+            <stop offset=".48" stop-color="#D9A63F"/>
+            <stop offset="1" stop-color="#96690F"/>
+          </linearGradient>
+        </defs>
+        <g fill="url(#stamp-gold)">
+          <rect x="18" y="18" width="84" height="84" rx="11"/>
+          <rect x="18" y="18" width="84" height="84" rx="11" transform="rotate(45 60 60)"/>
+        </g>
+      </svg>
+      <svg class="stamp-tick" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>
     </div>
     <h3 id="success-title" class="script"><span>Request</span> <span class="gold-text">received</span></h3>
     <p>Thank you. Your request has been noted. Our office will contact you shortly.</p>
