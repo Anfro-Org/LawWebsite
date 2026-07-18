@@ -792,8 +792,18 @@ a.fc-item:hover{color:var(--gold-hi)}
 @media(max-width:700px){
   .sec-eyebrow{font-size:.72rem;letter-spacing:.18em;gap:10px;text-align:center}
   .sec-eyebrow::before,.sec-eyebrow::after{width:20px}
-  /* the two-column zigzag + trunk lines are inherited from the <=1150 block */
-  .tree-grid{padding-top:84px}
+  /* below the two-column tablet zigzag: one card per row, joined to a
+     single vertical trunk drawn in JS (drawMobileTree) */
+  #practice .sec-eyebrow{white-space:nowrap}
+  .tree-grid{display:block;padding-top:16px}
+  .p-card{width:60%;margin:0 0 68px}
+  .p-card:nth-child(odd){margin-right:auto}
+  .p-card:nth-child(even){margin-left:auto}
+  .p-card:nth-child(odd) .p-tile{margin:0 0 20px}
+  .p-card:nth-child(even) .p-tile{margin:0 0 20px auto}
+  .p-card p{margin:0}
+  .p-card:nth-child(even) p{margin-left:auto}
+  .p-card:last-child{margin-bottom:0}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3)::before{display:none}
   .stat{padding:44px 16px;border-bottom:1px solid var(--line-soft)}

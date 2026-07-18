@@ -681,14 +681,93 @@
     };
   }
 
+  function drawMobileTree(defs) {
+    // phones: a single vertical trunk down the middle, one card per
+    // row, alternating left/right stubs joining it. The two-column
+    // tablet zigzag (701-1150px) keeps the heading fan-out below.
+    const treeRect = layoutBox(tree);
+    const radius = 10;
+    const gap = 10;
+
+    const firstTileBox = layoutBox(
+      cards[0].querySelector(".p-tile")
+    );
+
+    // a couple px above the first card's center -- a perfectly flat
+    // path has a zero-height bounding box, which breaks the gradient
+    // stroke (objectBoundingBox gradients need both dimensions > 0)
+    const topY =
+      firstTileBox.top +
+      firstTileBox.height / 2 -
+      treeRect.top -
+      3;
+
+    const trunkX = treeRect.width / 2;
+
+    let svg = "";
+
+    cards.forEach((card, index) => {
+      const tileBox = layoutBox(card.querySelector(".p-tile"));
+
+      const cy =
+        tileBox.top + tileBox.height / 2 - treeRect.top;
+
+      const onLeft = index % 2 === 0;
+
+      const cx = onLeft
+        ? tileBox.left + tileBox.width - treeRect.left + gap
+        : tileBox.left - treeRect.left - gap;
+
+      const bendDir = cx > trunkX ? 1 : -1;
+      const preBendY = Math.max(topY, cy - radius);
+
+      const pathData =
+        Math.abs(cx - trunkX) < radius * 2
+          ? `M ${trunkX} ${topY} L ${trunkX} ${cy} L ${cx} ${cy}`
+          : `M ${trunkX} ${topY} ` +
+            `L ${trunkX} ${preBendY} ` +
+            `Q ${trunkX} ${cy} ${
+              trunkX + bendDir * radius
+            } ${cy} ` +
+            `L ${cx} ${cy}`;
+
+      svg += `<path d="${pathData}" data-i="${index}"/>`;
+      svg += `<circle cx="${trunkX}" cy="${cy}" r="3" data-i="${index}"/>`;
+    });
+
+    treeSvg.innerHTML = defs + svg;
+
+    paths = [...treeSvg.querySelectorAll("path")];
+    dots = [...treeSvg.querySelectorAll("circle")];
+
+    paths.forEach((path) => {
+      const length = path.getTotalLength();
+
+      path.style.strokeDasharray = length;
+      path.style.strokeDashoffset = treeDrawn ? 0 : length;
+    });
+
+    dots.forEach((dot) => {
+      dot.style.opacity = treeDrawn ? 1 : 0;
+    });
+  }
+
   function drawTree() {
-    // Tablets and phones (<=1150px) share the central-trunk geometry: the grid
-    // is a two-column zigzag there, so a single trunk branching beside each tile
-    // keeps the lines out of the icon boxes. Above that, the six-across desktop
-    // fan is used. Keep this breakpoint in sync with the CSS @media(max-width:1150px).
+    // Phones (<=700px) get a single-column zigzag with one continuous
+    // vertical trunk (drawMobileTree). Tablets (701-1150px) share the
+    // central-trunk geometry with the two-column zigzag grid: a single
+    // trunk branching beside each tile keeps the lines out of the icon
+    // boxes. Above that, the six-across desktop fan is used. Keep these
+    // breakpoints in sync with the CSS media queries.
+    const defs = treeSvg.querySelector("defs").outerHTML;
+
+    if (innerWidth <= 700) {
+      drawMobileTree(defs);
+      return;
+    }
+
     const mobileTree = innerWidth <= 1150;
 
-    const defs = treeSvg.querySelector("defs").outerHTML;
     const treeRect = layoutBox(tree);
     const headingRect = layoutBox(treeHeading);
 
